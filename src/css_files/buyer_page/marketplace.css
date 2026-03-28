@@ -1,0 +1,27 @@
+.market-grid {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.crop-card {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+}
+
+.crop-card h3 {
+  color: #2e7d32;
+}
+
+.crop-card button {
+  margin-top: 10px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
