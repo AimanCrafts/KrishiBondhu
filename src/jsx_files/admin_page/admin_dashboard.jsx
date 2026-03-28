@@ -14,7 +14,7 @@ export default function AdminDashboard() {
 
   const handleApprove = (userId) => {
     approveUser(userId);
-    setUsers(getAllUsers()); // refresh
+    setUsers(getAllUsers());
   };
 
   const handleLogout = () => {
