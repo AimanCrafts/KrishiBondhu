@@ -1,4 +1,3 @@
-// src/jsx_files/buyer_page/buyer_dashboard.jsx
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -123,7 +122,6 @@ export default function BuyerDashboard() {
   const [barsAnimated, setBarsAnimated] = useState(false);
   const revealRefs = useRef([]);
 
-  /* Derive user info from auth context */
   const companyName =
     user?.profile?.companyName || user?.name || "Your Company";
   const contactPerson = user?.profile?.contactPerson || user?.name || "User";
