@@ -429,6 +429,176 @@ function FarmLandscape() {
 }
 
 /* ══════════════════════════════════
+   FARMER LOGIN FORM
+══════════════════════════════════ */
+function FarmerLoginForm({ onLogin }) {
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPw, setShowPw] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    setError("");
+    if (phone.length < 9)
+      return setError("Please enter a valid 10-digit mobile number.");
+    if (!password) return setError("Please enter your password.");
+
+    setLoading(true);
+    const result = await loginUser(phone, password);
+    setLoading(false);
+
+    if (!result.success) return setError(result.error);
+
+    if (result.user.role !== "farmer") {
+      return setError(
+        "This phone number is registered as a Buyer account. Please use the Buyer Login tab.",
+      );
+    }
+    onLogin(result.user);
+  };
+
+  return (
+    <div className="login-form-body">
+      {/* Farmer identity badge */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          background:
+            "linear-gradient(135deg,rgba(76,175,80,.12),rgba(46,125,50,.06))",
+          border: "1px solid rgba(76,175,80,.3)",
+          borderRadius: 12,
+          padding: "10px 14px",
+          marginBottom: 20,
+        }}
+      >
+        <i
+          className="fa-solid fa-tractor"
+          style={{ color: "#2e7d32", fontSize: 18 }}
+        />
+        <div>
+          <div
+            style={{
+              fontWeight: 700,
+              fontSize: 13,
+              color: "#1a2e1b",
+              fontFamily: "'Space Grotesk',sans-serif",
+            }}
+          >
+            Farmer Login
+          </div>
+          <div style={{ fontSize: 11, color: "#4d6e50" }}>
+            Sign in with your registered mobile number
+          </div>
+        </div>
+      </div>
+
+      {error && (
+        <div className="auth-error-banner">
+          <i className="fa-solid fa-circle-exclamation" /> {error}
+        </div>
+      )}
+
+      {/* Phone */}
+      <div className="su-form-group" style={{ marginBottom: 16 }}>
+        <label
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: "#2e4d30",
+            marginBottom: 6,
+            display: "block",
+          }}
+        >
+          Mobile Number
+        </label>
+        <div className="phone-prefix-wrap">
+          <div className="phone-prefix">+880</div>
+          <div className="su-input-wrap" style={{ flex: 1 }}>
+            <i className="fa-solid fa-phone" />
+            <input
+              type="tel"
+              placeholder="1XXXXXXXXX"
+              maxLength={10}
+              value={phone}
+              onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+              onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Password */}
+      <div className="su-form-group" style={{ marginBottom: 20 }}>
+        <label
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: "#2e4d30",
+            marginBottom: 6,
+            display: "block",
+          }}
+        >
+          Password
+        </label>
+        <div className="su-input-wrap" style={{ position: "relative" }}>
+          <i className="fa-solid fa-lock" />
+          <input
+            type={showPw ? "text" : "password"}
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            style={{ paddingRight: 40 }}
+          />
+          <i
+            className={`fa-solid ${showPw ? "fa-eye-slash" : "fa-eye"}`}
+            onClick={() => setShowPw((p) => !p)}
+            style={{
+              position: "absolute",
+              right: 14,
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "#8aaa8c",
+              cursor: "pointer",
+              fontSize: 13,
+              zIndex: 3,
+            }}
+          />
+        </div>
+      </div>
+
+      <button className="login-btn" onClick={handleSubmit} disabled={loading}>
+        {loading ? (
+          <>
+            <i className="fa-solid fa-spinner fa-spin" /> Signing in…
+          </>
+        ) : (
+          <>
+            <i className="fa-solid fa-tractor" /> Sign In as Farmer
+          </>
+        )}
+      </button>
+
+      <div
+        style={{
+          textAlign: "center",
+          marginTop: 14,
+          fontSize: 12,
+          color: "#8aaa8c",
+        }}
+      >
+        <a href="#" style={{ color: "#4caf50", fontWeight: 600 }}>
+          Forgot password?
+        </a>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════
    BUYER LOGIN FORM
 ══════════════════════════════════ */
 function BuyerLoginForm({ onLogin }) {
