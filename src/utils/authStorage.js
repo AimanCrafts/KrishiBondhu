@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = "http://localhost:5000/api";
 
 /* ── Session Management ──────────────────────────────────────────────────── */
 
@@ -32,34 +32,34 @@ export async function registerUser(role, formData) {
   try {
     const endpoint =
       role === "farmer"
-        ? `${API_URL}/farmer/signup`
-        : `${API_URL}/buyer/signup`;
+        ? `${API_URL}/auth/farmer/signup`
+        : `${API_URL}/auth/buyer/signup`;
 
-    const body =
-      role === "farmer"
-        ? {
-            name: formData.fullName || "",
-            phone: formData.phone || "",
-            password: formData.password || "",
-          }
-        : {
-            name: formData.companyName || formData.contactPerson || "",
-            email: formData.email || "",
-            password: formData.password || "",
-          };
+    if (role === "farmer") {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.fullName || "",
+          phone: formData.phone || "",
+          password: formData.password || "",
+          district: formData.district || "",
+          division: formData.division || "",
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok)
+        return { success: false, error: data.message || "Signup failed" };
+      return { success: true, user: data.user };
+    }
 
     const res = await fetch(endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: formData,
     });
-
     const data = await res.json();
-
-    if (!res.ok) {
+    if (!res.ok)
       return { success: false, error: data.message || "Signup failed" };
-    }
-
     return { success: true, user: data.user };
   } catch (error) {
     return { success: false, error: "Server এ connect করা যাচ্ছে না" };
@@ -75,8 +75,8 @@ export async function loginUser(identifier, password) {
     const isFarmer = !identifier.includes("@");
 
     const endpoint = isFarmer
-      ? `${API_URL}/farmer/login`
-      : `${API_URL}/buyer/login`;
+      ? `${API_URL}/auth/farmer/login`
+      : `${API_URL}/auth/buyer/login`;
 
     const body = isFarmer
       ? { phone: identifier, password }
@@ -102,7 +102,7 @@ export async function loginUser(identifier, password) {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   LOGIN — OTP
+   LOGIN — OTP (Demo)
 ══════════════════════════════════════════════════════════════════════════ */
 
 export async function loginWithOtp(phone, otp) {
@@ -112,25 +112,29 @@ export async function loginWithOtp(phone, otp) {
   return { success: false, error: "OTP login coming soon!" };
 }
 
-/* ── Admin login ─────────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════
+   ADMIN LOGIN — calls backend, gets real JWT
+══════════════════════════════════════════════════════════════════════════ */
 
-export function loginAdmin(email, password) {
-  const ADMIN_EMAIL = "admin@krishibondhu.com";
-  const ADMIN_PASSWORD = "Admin@KB2026";
+export async function loginAdmin(email, password) {
+  try {
+    const res = await fetch(`${API_URL}/admin/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-  if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
-    return { success: false, error: "Invalid admin credentials." };
+    const data = await res.json();
+
+    if (!res.ok) {
+      return { success: false, error: data.message || "Invalid credentials." };
+    }
+
+    saveSession(data.user, data.token);
+    return { success: true, user: data.user };
+  } catch (error) {
+    return { success: false, error: "Server এ connect করা যাচ্ছে না" };
   }
-
-  const adminUser = {
-    id: "KB-A-ADMIN",
-    role: "admin",
-    name: "Admin",
-    email: ADMIN_EMAIL,
-  };
-
-  saveSession(adminUser, "admin-token");
-  return { success: true, user: adminUser };
 }
 
 /* ── Admin Helpers ───────────────────────────────────────────────────────── */
