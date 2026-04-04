@@ -132,8 +132,6 @@ export default function BuyerDashboard() {
       .filter(Boolean)
       .join(", ") || "Dhaka";
 
-  
-
   useEffect(() => {
     const d = new Date();
     setTodayDate(
