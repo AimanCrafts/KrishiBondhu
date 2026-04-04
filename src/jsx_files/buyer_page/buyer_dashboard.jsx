@@ -132,6 +132,8 @@ export default function BuyerDashboard() {
       .filter(Boolean)
       .join(", ") || "Dhaka";
 
+  
+
   useEffect(() => {
     const d = new Date();
     setTodayDate(
@@ -170,7 +172,7 @@ export default function BuyerDashboard() {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -199,7 +201,11 @@ export default function BuyerDashboard() {
               <i className="fa-regular fa-bell" />
               <span className="bd-notif-dot" />
             </button>
-            <div className="bd-avatar-wrap">
+            <div
+              className="bd-avatar-wrap"
+              onClick={() => navigate("/buyer/profile")}
+              style={{ cursor: "pointer" }}
+            >
               <div className="bd-avatar">{firstLetter}</div>
               <div>
                 <div className="bd-avatar-name">{contactPerson}</div>
@@ -240,6 +246,7 @@ export default function BuyerDashboard() {
             onClick={() => {
               setActiveNav("marketplace");
               setSidebarOpen(false);
+              navigate("/buyer/marketplace");
             }}
           >
             <i className="fa-solid fa-store" /> Marketplace
@@ -250,6 +257,7 @@ export default function BuyerDashboard() {
             onClick={() => {
               setActiveNav("orders");
               setSidebarOpen(false);
+              navigate("/buyer/orders");
             }}
           >
             <i className="fa-solid fa-box" /> My Orders
@@ -260,6 +268,7 @@ export default function BuyerDashboard() {
             onClick={() => {
               setActiveNav("farmers");
               setSidebarOpen(false);
+              navigate("/buyer/farmers");
             }}
           >
             <i className="fa-solid fa-tractor" /> Farmer Directory
