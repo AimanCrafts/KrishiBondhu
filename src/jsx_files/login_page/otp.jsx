@@ -1,5 +1,3 @@
-// src/jsx_files/login_page/otp.jsx
-
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { loginWithOtp } from "../../utils/authStorage";
@@ -10,7 +8,6 @@ export default function OTP() {
   const location = useLocation();
   const { login } = useAuth();
 
-  // phone passed from login page
   const phone = location.state?.phone || "";
 
   const [otp, setOtp] = useState("");
@@ -35,10 +32,8 @@ export default function OTP() {
         return;
       }
 
-      // ✅ Save user in context
       login(result.user);
 
-      // ✅ Redirect based on role
       if (result.user.role === "farmer") {
         navigate("/dashboard");
       } else if (result.user.role === "business") {
