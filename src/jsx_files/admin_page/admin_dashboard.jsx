@@ -92,7 +92,6 @@ function OverviewTab() {
         setRecentUsers(u.users || []);
       } catch (e) {
         setError(e.message);
-        // Fallback demo data
         setStats({
           farmers: 24,
           buyers: 11,
@@ -290,7 +289,7 @@ function UsersTab() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [actionLoading, setActionLoading] = useState(null);
   const [toast, setToast] = useState("");
-  const [viewingDocs, setViewingDocs] = useState(null); // ← এটাই শুধু যোগ করো
+  const [viewingDocs, setViewingDocs] = useState(null);
 
   const showToast = (msg) => {
     setToast(msg);
@@ -302,7 +301,6 @@ function UsersTab() {
       const data = await apiCall("/admin/users");
       setUsers(data.users || []);
     } catch {
-      // Demo users for when backend not connected
       setUsers([
         {
           _id: "1",
@@ -376,7 +374,6 @@ function UsersTab() {
       );
       showToast(`User ${action} successfully.`);
     } catch {
-      // Demo: update locally
       setUsers((prev) =>
         prev.map((u) => (u._id === userId ? { ...u, status: action } : u)),
       );
@@ -678,7 +675,6 @@ function CropsTab() {
       const data = await apiCall("/admin/crops");
       setCrops(data.crops || []);
     } catch {
-      // Demo data
       setCrops([
         {
           _id: "c1",
@@ -780,7 +776,6 @@ function CropsTab() {
       }
       setModalOpen(false);
     } catch {
-      // Demo: update locally
       if (editingCrop) {
         setCrops((prev) =>
           prev.map((c) =>
@@ -803,9 +798,7 @@ function CropsTab() {
   const handleDelete = async (id) => {
     try {
       await apiCall(`/admin/crops/${id}`, { method: "DELETE" });
-    } catch {
-      /* demo */
-    }
+    } catch {}
     setCrops((prev) => prev.filter((c) => c._id !== id));
     setDeleteId(null);
     showToast("Crop deleted.");
@@ -1179,9 +1172,7 @@ function MarketplaceTab() {
   const handleRemove = async (id) => {
     try {
       await apiCall(`/admin/marketplace/${id}`, { method: "DELETE" });
-    } catch {
-      /* demo */
-    }
+    } catch {}
     setListings((prev) => prev.filter((l) => l._id !== id));
     showToast("Listing removed.");
   };
@@ -1517,9 +1508,7 @@ function ExpertsTab() {
   const handleDelete = async (id) => {
     try {
       await apiCall(`/admin/experts/${id}`, { method: "DELETE" });
-    } catch {
-      /* demo */
-    }
+    } catch {}
     setExperts((prev) => prev.filter((e) => e._id !== id));
     showToast("Expert removed.");
   };
@@ -1829,9 +1818,7 @@ function ContentTab() {
             }),
           );
         }
-      } catch {
-        /* use defaults */
-      }
+      } catch {}
     })();
   }, []);
 
