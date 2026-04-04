@@ -1,6 +1,5 @@
-// backend/controllers/buyerController.js
-const User    = require("../models/user");
-const Order   = require("../models/order");
+const User = require("../models/user");
+const Order = require("../models/order");
 const Listing = require("../models/listing");
 const Content = require("../models/content");
 
@@ -25,18 +24,28 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const allowed = [
-      "name", "phone", "email",
-      "division", "district",
-      // profile sub-fields stored as flat fields for simplicity
-      "companyName", "contactPerson", "businessType", "address", "bio", "cropInterests",
+      "name",
+      "phone",
+      "email",
+      "division",
+      "district",
+      "companyName",
+      "contactPerson",
+      "businessType",
+      "address",
+      "bio",
+      "cropInterests",
     ];
 
     const update = {};
-    allowed.forEach(k => {
+    allowed.forEach((k) => {
       if (req.body[k] !== undefined) update[k] = req.body[k];
     });
 
-    const user = await User.findByIdAndUpdate(req.user.id, update, { new: true, runValidators: true }).select("-password");
+    const user = await User.findByIdAndUpdate(req.user.id, update, {
+      new: true,
+      runValidators: true,
+    }).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.json({ success: true, user });
@@ -52,19 +61,24 @@ const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
     if (!currentPassword || !newPassword) {
-      return res.status(400).json({ message: "Both currentPassword and newPassword required" });
+      return res
+        .status(400)
+        .json({ message: "Both currentPassword and newPassword required" });
     }
     if (newPassword.length < 8) {
-      return res.status(400).json({ message: "Password must be at least 8 characters" });
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 8 characters" });
     }
 
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const isMatch = await user.matchPassword(currentPassword);
-    if (!isMatch) return res.status(401).json({ message: "Current password is incorrect" });
+    if (!isMatch)
+      return res.status(401).json({ message: "Current password is incorrect" });
 
-    user.password = newPassword; // schema pre-save will hash it
+    user.password = newPassword;
     await user.save();
 
     res.json({ success: true, message: "Password updated" });
@@ -95,7 +109,10 @@ const getOrders = async (req, res) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const getOrderById = async (req, res) => {
   try {
-    const order = await Order.findOne({ _id: req.params.id, buyer: req.user.id });
+    const order = await Order.findOne({
+      _id: req.params.id,
+      buyer: req.user.id,
+    });
     if (!order) return res.status(404).json({ message: "Order not found" });
     res.json({ order });
   } catch (err) {
@@ -109,32 +126,43 @@ const getOrderById = async (req, res) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const placeOrder = async (req, res) => {
   try {
-    const { listingId, crop, qtyKg, pricePerKg, farmerName, farmerLocation, note } = req.body;
+    const {
+      listingId,
+      crop,
+      qtyKg,
+      pricePerKg,
+      farmerName,
+      farmerLocation,
+      note,
+    } = req.body;
 
     if (!crop || !qtyKg || !pricePerKg) {
-      return res.status(400).json({ message: "crop, qtyKg, and pricePerKg are required" });
+      return res
+        .status(400)
+        .json({ message: "crop, qtyKg, and pricePerKg are required" });
     }
 
-    // Validate listing exists (optional — listing may be offline)
     let listing = null;
     if (listingId) {
       listing = await Listing.findById(listingId);
-      if (!listing) return res.status(404).json({ message: "Listing not found" });
-      if (listing.status !== "active") return res.status(400).json({ message: "Listing is no longer active" });
+      if (!listing)
+        return res.status(404).json({ message: "Listing not found" });
+      if (listing.status !== "active")
+        return res.status(400).json({ message: "Listing is no longer active" });
     }
 
     const order = await Order.create({
-      buyer:          req.user.id,
-      listing:        listingId || null,
+      buyer: req.user.id,
+      listing: listingId || null,
       crop,
-      qtyKg:          Number(qtyKg),
-      pricePerKg:     Number(pricePerKg),
-      totalAmount:    Number(qtyKg) * Number(pricePerKg),
-      farmerName:     farmerName || (listing ? listing.farmer : ""),
+      qtyKg: Number(qtyKg),
+      pricePerKg: Number(pricePerKg),
+      totalAmount: Number(qtyKg) * Number(pricePerKg),
+      farmerName: farmerName || (listing ? listing.farmer : ""),
       farmerLocation: farmerLocation || (listing ? listing.location : ""),
-      note:           note || "",
-      status:         "pending",
-      paymentStatus:  "pending",
+      note: note || "",
+      status: "pending",
+      paymentStatus: "pending",
     });
 
     res.status(201).json({ success: true, order });
@@ -149,9 +177,15 @@ const placeOrder = async (req, res) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const cancelOrder = async (req, res) => {
   try {
-    const order = await Order.findOne({ _id: req.params.id, buyer: req.user.id });
+    const order = await Order.findOne({
+      _id: req.params.id,
+      buyer: req.user.id,
+    });
     if (!order) return res.status(404).json({ message: "Order not found" });
-    if (order.status !== "pending") return res.status(400).json({ message: "Only pending orders can be cancelled" });
+    if (order.status !== "pending")
+      return res
+        .status(400)
+        .json({ message: "Only pending orders can be cancelled" });
 
     order.status = "cancelled";
     await order.save();
@@ -176,9 +210,9 @@ const getMarketplaceListings = async (req, res) => {
 
     let query = Listing.find(filter);
 
-    if (sort === "price_asc")  query = query.sort({ price: 1 });
+    if (sort === "price_asc") query = query.sort({ price: 1 });
     else if (sort === "price_desc") query = query.sort({ price: -1 });
-    else query = query.sort({ featured: -1, createdAt: -1 }); // featured first
+    else query = query.sort({ featured: -1, createdAt: -1 });
 
     if (limit) query = query.limit(parseInt(limit));
 
@@ -206,9 +240,10 @@ const getFarmerDirectory = async (req, res) => {
 
     if (search) {
       const s = search.toLowerCase();
-      farmers = farmers.filter(f =>
-        f.name.toLowerCase().includes(s) ||
-        (f.district || "").toLowerCase().includes(s)
+      farmers = farmers.filter(
+        (f) =>
+          f.name.toLowerCase().includes(s) ||
+          (f.district || "").toLowerCase().includes(s),
       );
     }
 
@@ -226,7 +261,8 @@ const getFarmerDirectory = async (req, res) => {
 const getContentBlock = async (req, res) => {
   try {
     const block = await Content.findOne({ key: req.params.key });
-    if (!block) return res.json({ key: req.params.key, value: "", type: "text" });
+    if (!block)
+      return res.json({ key: req.params.key, value: "", type: "text" });
     res.json({ key: block.key, value: block.value, type: block.type });
   } catch (err) {
     res.status(500).json({ message: err.message });
