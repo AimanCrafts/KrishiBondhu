@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import "../../css_files/signup_page/signup.css";
 
-
 const DIVISIONS = [
   "Dhaka",
   "Chattogram",
@@ -182,15 +181,45 @@ function BusinessForm({ onSubmit }) {
     return null;
   };
 
+  const v2 = () => {
+    if (!licenseFile) return "Trade License document upload করুন।";
+    if (!tinFile) return "TIN Certificate document upload করুন।";
+    return null;
+  };
+
   const handleFinalSubmit = async () => {
     setError("");
+
+    if (!licenseFile) return setError("Trade License document upload করুন।");
+    if (!tinFile) return setError("TIN Certificate document upload করুন।");
+
     if (!form.password || form.password.length < 6)
       return setError("Password must be at least 6 characters.");
     if (form.password !== form.confirmPassword)
       return setError("Passwords do not match.");
 
     setLoading(true);
-    await onSubmit("business", form);
+
+    const formData = new FormData();
+    formData.append("name", form.companyName);
+    formData.append("email", form.email);
+    formData.append("password", form.password);
+    formData.append("division", form.division);
+    formData.append("district", form.district);
+    formData.append("companyName", form.companyName);
+    formData.append("businessType", form.businessType);
+    formData.append("tradeLicense", form.tradeLicense);
+    formData.append("tin", form.tin);
+    formData.append("employeeCount", form.employeeCount);
+    formData.append("annualTurnover", form.annualTurnover);
+    formData.append("contactPerson", form.contactPerson);
+    formData.append("address", form.address);
+
+    if (licenseFile) formData.append("licenseFile", licenseFile);
+    if (tinFile) formData.append("tinFile", tinFile);
+    if (extraFile) formData.append("extraFile", extraFile);
+
+    await onSubmit("business", formData);
     setLoading(false);
   };
 
@@ -444,8 +473,8 @@ function BusinessForm({ onSubmit }) {
         file={licenseFile}
         inputRef={licenseRef}
         onChangeSetter={setLicenseFile}
-        label="Trade License"
-        hint="(PDF, JPG or PNG · max 5MB)"
+        label="Trade License*"
+        hint="(PDF, JPG or PNG · max 5MB · Required)"
         emptyLabel="Click to upload Trade License"
         emptyHint="Issued by City Corporation, Paurashava or RJSC"
       />
@@ -453,8 +482,8 @@ function BusinessForm({ onSubmit }) {
         file={tinFile}
         inputRef={tinRef}
         onChangeSetter={setTinFile}
-        label="TIN Certificate"
-        hint="(PDF, JPG or PNG · max 5MB)"
+        label="TIN Certificate*"
+        hint="(PDF, JPG or PNG · max 5MB · Required)"
         emptyLabel="Click to upload TIN Certificate"
         emptyHint="Issued by the National Board of Revenue (NBR)"
       />
