@@ -565,15 +565,10 @@ export default function Signup() {
   return (
     <div className="signup-bg">
       {/* ── Top Nav ── */}
-      
 
       {/*
         ══════════════════════════════════════════════════════
         TWO-COLUMN LAYOUT
-        .signup-layout      → display:grid, two columns
-        .signup-card-col    → left, normal flow (card lives here)
-        .signup-hero-col    → right, position:sticky so it never
-                              moves while the left column grows
         ══════════════════════════════════════════════════════
       */}
       <div className="signup-layout">
