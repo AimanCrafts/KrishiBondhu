@@ -1,7 +1,5 @@
-// backend/middleware/adminAuth.js
 const jwt = require("jsonwebtoken");
 
-// শুধু admin দের জন্য
 const adminAuth = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -25,7 +23,6 @@ const adminAuth = (req, res, next) => {
   }
 };
 
-// যেকোনো logged-in user এর জন্য (farmer, buyer, admin)
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -37,7 +34,7 @@ const verifyToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // { id, role }
+    req.user = decoded;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired token" });
