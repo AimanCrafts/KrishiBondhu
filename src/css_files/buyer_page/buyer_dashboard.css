@@ -53,7 +53,7 @@ html {
 }
 
 /* ══════════════════════════════════
-   TOPBAR — same structure as farmer
+   TOPBAR 
 ══════════════════════════════════ */
 .bd-topbar {
   position: fixed;
@@ -409,7 +409,6 @@ html {
   letter-spacing: 0.5px;
 }
 
-/* Hero right — same structure as farmer */
 .bd-hero-right {
   position: relative;
   overflow: hidden;
@@ -674,7 +673,6 @@ html {
   box-shadow: 0 4px 24px rgba(21, 101, 192, 0.06);
 }
 
-/* Bar chart */
 .bd-chart-wrap {
   display: flex;
   align-items: flex-end;
@@ -724,7 +722,6 @@ html {
   display: inline-block;
 }
 
-/* KPI grid */
 .bd-kpi-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
