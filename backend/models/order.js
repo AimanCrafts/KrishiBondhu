@@ -1,4 +1,3 @@
-// backend/models/order.js
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
@@ -58,7 +57,6 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// Auto-generate order number before save
 orderSchema.pre("save", async function (next) {
   if (!this.orderNumber) {
     const count = await mongoose.model("Order").countDocuments();
