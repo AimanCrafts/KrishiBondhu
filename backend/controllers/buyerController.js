@@ -5,7 +5,6 @@ const Content = require("../models/content");
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/buyer/profile
-// Returns the logged-in buyer's profile (minus password)
 // ─────────────────────────────────────────────────────────────────────────────
 const getProfile = async (req, res) => {
   try {
@@ -19,7 +18,6 @@ const getProfile = async (req, res) => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PUT /api/buyer/profile
-// Update buyer's editable profile fields
 // ─────────────────────────────────────────────────────────────────────────────
 const updateProfile = async (req, res) => {
   try {
@@ -89,7 +87,6 @@ const changePassword = async (req, res) => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/buyer/orders
-// Get all orders for the logged-in buyer (with optional status filter)
 // ─────────────────────────────────────────────────────────────────────────────
 const getOrders = async (req, res) => {
   try {
@@ -122,7 +119,6 @@ const getOrderById = async (req, res) => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // POST /api/buyer/orders
-// Place a new order
 // ─────────────────────────────────────────────────────────────────────────────
 const placeOrder = async (req, res) => {
   try {
@@ -173,7 +169,6 @@ const placeOrder = async (req, res) => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PATCH /api/buyer/orders/:id/cancel
-// Buyer can cancel a pending order
 // ─────────────────────────────────────────────────────────────────────────────
 const cancelOrder = async (req, res) => {
   try {
@@ -198,8 +193,6 @@ const cancelOrder = async (req, res) => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/buyer/marketplace
-// Public-ish — returns active listings for buyers to browse
-// (No admin token needed — buyer JWT is enough)
 // ─────────────────────────────────────────────────────────────────────────────
 const getMarketplaceListings = async (req, res) => {
   try {
@@ -212,7 +205,7 @@ const getMarketplaceListings = async (req, res) => {
 
     if (sort === "price_asc") query = query.sort({ price: 1 });
     else if (sort === "price_desc") query = query.sort({ price: -1 });
-    else query = query.sort({ featured: -1, createdAt: -1 });
+    else query = query.sort({ featured: -1, createdAt: -1 }); // featured first
 
     if (limit) query = query.limit(parseInt(limit));
 
@@ -225,7 +218,6 @@ const getMarketplaceListings = async (req, res) => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/buyer/farmers
-// Returns approved farmer list for the directory
 // ─────────────────────────────────────────────────────────────────────────────
 const getFarmerDirectory = async (req, res) => {
   try {
@@ -255,8 +247,6 @@ const getFarmerDirectory = async (req, res) => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/buyer/content/:key
-// Returns a single admin-managed content block (buyer_alert, market_notice, etc.)
-// No auth required — public read of content blocks
 // ─────────────────────────────────────────────────────────────────────────────
 const getContentBlock = async (req, res) => {
   try {
