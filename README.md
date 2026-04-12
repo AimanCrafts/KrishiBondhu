@@ -1,4 +1,4 @@
-# KrishiBondhu 🌾
+# KrishiBondhu
 
 KrishiBondhu is a full-stack **MERN** web platform that bridges the gap between farmers, agricultural experts, and bulk buyers — providing real-time weather intelligence, AI-powered crop advisory, disease detection support, and a direct farmer–buyer marketplace, designed to promote sustainable farming and social impact in Bangladesh.
 
@@ -20,7 +20,7 @@ By combining these features, KrishiBondhu provides a **seamless, data-driven, an
 
 ## Key Features
 
-### 👨‍🌾 For Farmers
+### For Farmers
 
 | Feature | Description |
 |---------|-------------|
@@ -32,7 +32,7 @@ By combining these features, KrishiBondhu provides a **seamless, data-driven, an
 | **Notification System** | Real-time alerts for new crops, diseases, and weather warnings |
 | **Settings & Profile** | Manage personal and farm information |
 
-### 🏢 For Buyers (Businesses)
+### For Buyers (Businesses)
 
 | Feature | Description |
 |---------|-------------|
@@ -43,7 +43,7 @@ By combining these features, KrishiBondhu provides a **seamless, data-driven, an
 | **Business Profile** | Manage company information and procurement preferences |
 | **Document Verification** | Submit trade license and TIN for admin approval |
 
-### 👑 For Admin
+### For Admin
 
 | Feature | Description |
 |---------|-------------|
@@ -55,7 +55,7 @@ By combining these features, KrishiBondhu provides a **seamless, data-driven, an
 | **Expert Directory** | Add/edit agricultural experts available for consultation |
 | **Content Management** | Update dashboard banners and alert messages in real-time |
 
-### 🔔 Notification System
+### Notification System
 - Real-time notifications for new crops, diseases, status changes, and alerts  
 - Role-based audience targeting (farmers, businesses, or all users)  
 - Mark as read / mark all read functionality  
