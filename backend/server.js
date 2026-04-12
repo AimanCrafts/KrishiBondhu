@@ -5,13 +5,15 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const buyerRoutes = require("./routes/buyerRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 dotenv.config();
 
 const { v2: cloudinary } = require("cloudinary");
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
@@ -28,6 +30,10 @@ app.use(
   }),
 );
 app.use(express.json());
+
+app.use("/api/notifications", notificationRoutes);
+
+app.use("/api/user", userRoutes);
 
 // Health check
 app.get("/", (req, res) => {
