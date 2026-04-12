@@ -7,16 +7,13 @@ const ROLE_DASHBOARD = {
   admin: "/admin_dashboard",
 };
 
-export default function ProtectedRoute({ children, allowedRole }) {
+export default function PublicOnlyRoute({ children }) {
   const { user, loading } = useAuth();
 
   if (loading) return null;
 
-  // Not logged in → login page
-  if (!user) return <Navigate to="/login" replace />;
-
-  // Wrong role → their own dashboard
-  if (allowedRole && user.role !== allowedRole) {
+  // Already logged in → go to your dashboard
+  if (user) {
     return <Navigate to={ROLE_DASHBOARD[user.role] || "/"} replace />;
   }
 
