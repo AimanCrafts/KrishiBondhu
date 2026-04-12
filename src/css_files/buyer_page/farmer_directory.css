@@ -1,5 +1,3 @@
-/* src/css_files/buyer_page/farmer_directory.css */
-
 :root {
   --fd-navy:     #0f172a;
   --fd-navy-2:   #1e293b;
@@ -313,6 +311,7 @@
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
