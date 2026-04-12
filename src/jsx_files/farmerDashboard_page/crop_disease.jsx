@@ -1,5 +1,3 @@
-// src/jsx_files/farmerDashboard_page/crop_disease.jsx
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../css_files/farmerDashboard_page/crop_disease.css";
@@ -55,7 +53,6 @@ export default function CropDisease() {
     fetchDiseases();
   }, []);
 
-  // Dynamic crop filters from fetched data
   const cropTypes = ["all", ...new Set(diseases.map((d) => d.crop))];
 
   const filtered = diseases.filter(
