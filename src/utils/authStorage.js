@@ -1,5 +1,20 @@
 const API_URL = "http://localhost:5000/api";
 
+export function isTokenExpired() {
+  const token = localStorage.getItem("kb_token");
+  if (!token) return true;
+
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) return true;
+    const payload = JSON.parse(atob(parts[1]));
+    if (!payload.exp) return true;
+    return payload.exp * 1000 < Date.now();
+  } catch {
+    return true;
+  }
+}
+
 /* ── Session Management ──────────────────────────────────────────────────── */
 
 function saveSession(userObj, token) {
@@ -55,7 +70,7 @@ export async function registerUser(role, formData) {
 
     const res = await fetch(endpoint, {
       method: "POST",
-      body: formData,
+      body: formData, 
     });
     const data = await res.json();
     if (!res.ok)
