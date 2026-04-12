@@ -200,6 +200,7 @@ function BusinessForm({ onSubmit }) {
 
     setLoading(true);
 
+    // FormData বানাও — file পাঠাতে এটাই লাগবে
     const formData = new FormData();
     formData.append("name", form.companyName);
     formData.append("email", form.email);
@@ -215,6 +216,7 @@ function BusinessForm({ onSubmit }) {
     formData.append("contactPerson", form.contactPerson);
     formData.append("address", form.address);
 
+    // Files — optional, থাকলেই শুধু append হবে
     if (licenseFile) formData.append("licenseFile", licenseFile);
     if (tinFile) formData.append("tinFile", tinFile);
     if (extraFile) formData.append("extraFile", extraFile);
