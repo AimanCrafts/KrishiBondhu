@@ -92,6 +92,7 @@ function OverviewTab() {
         setRecentUsers(u.users || []);
       } catch (e) {
         setError(e.message);
+        // Fallback demo data
         setStats({
           farmers: 24,
           buyers: 11,
@@ -660,6 +661,8 @@ function CropsTab() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCrop, setEditingCrop] = useState(null);
   const [form, setForm] = useState(BLANK_CROP);
+  const [imgFile, setImgFile] = useState(null);
+  const [imgTab, setImgTab] = useState("url");
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [toast, setToast] = useState("");
@@ -729,67 +732,71 @@ function CropsTab() {
   const openAdd = () => {
     setEditingCrop(null);
     setForm(BLANK_CROP);
+    setImgFile(null);
+    setImgTab("url");
     setModalOpen(true);
   };
 
   const openEdit = (crop) => {
     setEditingCrop(crop);
     setForm({ ...crop, tags: (crop.tags || []).join(", ") });
+    setImgFile(null);
+    setImgTab("url");
     setModalOpen(true);
   };
 
   const handleSave = async () => {
-    if (!form.name.trim() || !form.img.trim()) {
-      showToast("Crop name and image URL are required.");
+    if (!form.name.trim()) {
+      showToast("Crop name is required.");
+      return;
+    }
+    if (!imgFile && !form.img.trim()) {
+      showToast("Image file or URL required.");
       return;
     }
     setSaving(true);
-    const payload = {
-      ...form,
-      tags: form.tags
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean),
-    };
+
+    const fd = new FormData();
+    fd.append("name", form.name.trim());
+    fd.append("type", form.type);
+    fd.append("season", form.season);
+    fd.append("region", form.region);
+    fd.append("period", form.period);
+    fd.append("desc", form.desc);
+    fd.append("tags", form.tags);
+    if (imgFile) {
+      fd.append("img", imgFile);
+    } else {
+      fd.append("img", form.img);
+    }
+
     try {
+      const token = localStorage.getItem("kb_token");
+      const url = editingCrop
+        ? `http://localhost:5000/api/admin/crops/${editingCrop._id}`
+        : `http://localhost:5000/api/admin/crops`;
+      const method = editingCrop ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
       if (editingCrop) {
-        await apiCall(`/admin/crops/${editingCrop._id}`, {
-          method: "PUT",
-          body: JSON.stringify(payload),
-        });
         setCrops((prev) =>
-          prev.map((c) =>
-            c._id === editingCrop._id ? { ...c, ...payload } : c,
-          ),
+          prev.map((c) => (c._id === editingCrop._id ? data.crop : c)),
         );
         showToast("Crop updated successfully.");
       } else {
-        const res = await apiCall("/admin/crops", {
-          method: "POST",
-          body: JSON.stringify(payload),
-        });
-        setCrops((prev) => [
-          ...prev,
-          res.crop || { ...payload, _id: Date.now().toString() },
-        ]);
+        setCrops((prev) => [data.crop, ...prev]);
         showToast("Crop added successfully.");
       }
       setModalOpen(false);
-    } catch {
-      if (editingCrop) {
-        setCrops((prev) =>
-          prev.map((c) =>
-            c._id === editingCrop._id ? { ...c, ...payload } : c,
-          ),
-        );
-      } else {
-        setCrops((prev) => [
-          ...prev,
-          { ...payload, _id: Date.now().toString() },
-        ]);
-      }
-      showToast(`Crop ${editingCrop ? "updated" : "added"} (demo mode).`);
-      setModalOpen(false);
+    } catch (err) {
+      showToast(`Error: ${err.message}`);
     } finally {
       setSaving(false);
     }
@@ -798,7 +805,9 @@ function CropsTab() {
   const handleDelete = async (id) => {
     try {
       await apiCall(`/admin/crops/${id}`, { method: "DELETE" });
-    } catch {}
+    } catch {
+      /* demo */
+    }
     setCrops((prev) => prev.filter((c) => c._id !== id));
     setDeleteId(null);
     showToast("Crop deleted.");
@@ -941,23 +950,72 @@ function CropsTab() {
             />
           </div>
           <div className="ad-form-group ad-fg-full">
-            <label>
-              Image URL *{" "}
-              <span className="ad-label-hint">(direct link to crop photo)</span>
-            </label>
-            <input
-              type="url"
-              value={form.img}
-              onChange={(e) => upd("img", e.target.value)}
-              placeholder="https://images.unsplash.com/..."
-            />
-            {form.img && (
-              <img
-                src={form.img}
-                alt="preview"
-                className="ad-img-preview"
-                onError={(e) => (e.target.style.display = "none")}
-              />
+            <label>Crop Image *</label>
+
+            {/* Tab switcher */}
+            <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+              {["url", "upload"].map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => {
+                    setImgTab(t);
+                    setImgFile(null);
+                    upd("img", "");
+                  }}
+                  style={{
+                    padding: "6px 16px",
+                    borderRadius: 6,
+                    border: "1.5px solid",
+                    borderColor: imgTab === t ? "#16a34a" : "#e5e7eb",
+                    background: imgTab === t ? "#dcfce7" : "white",
+                    color: imgTab === t ? "#16a34a" : "#6b7280",
+                    fontWeight: 600,
+                    fontSize: 13,
+                    cursor: "pointer",
+                  }}
+                >
+                  {t === "url" ? "🔗 Image URL" : "📁 File Upload"}
+                </button>
+              ))}
+            </div>
+
+            {imgTab === "url" ? (
+              <>
+                <input
+                  type="url"
+                  value={form.img}
+                  onChange={(e) => upd("img", e.target.value)}
+                  placeholder="https://images.unsplash.com/..."
+                />
+                {form.img && (
+                  <img
+                    src={form.img}
+                    alt="preview"
+                    className="ad-img-preview"
+                    onError={(e) => (e.target.style.display = "none")}
+                  />
+                )}
+              </>
+            ) : (
+              <>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) setImgFile(file);
+                  }}
+                  style={{ padding: "8px 0" }}
+                />
+                {imgFile && (
+                  <img
+                    src={URL.createObjectURL(imgFile)}
+                    alt="preview"
+                    className="ad-img-preview"
+                  />
+                )}
+              </>
             )}
           </div>
           <div className="ad-form-group ad-fg-full">
@@ -1727,8 +1785,501 @@ function ExpertsTab() {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   TAB — DISEASE LIBRARY
+══════════════════════════════════════════════════════════════ */
+const BLANK_DISEASE = {
+  name: "",
+  crop: "rice",
+  severity: "medium",
+  desc: "",
+  symptoms: "",
+  treatment: "",
+  prevention: "",
+  img: "",
+};
+
+const CROP_OPTIONS = ["rice", "wheat", "potato", "maize", "jute", "other"];
+const SEV_OPTIONS = ["high", "medium", "low"];
+
+const SEV_COLOR = {
+  high: { bg: "#fef2f2", border: "#fecaca", text: "#dc2626", dot: "🔴" },
+  medium: { bg: "#fffbeb", border: "#fde68a", text: "#d97706", dot: "🟡" },
+  low: { bg: "#f0fdf4", border: "#bbf7d0", text: "#16a34a", dot: "🟢" },
+};
+
+const CROP_ICON = {
+  rice: "fa-wheat-awn",
+  wheat: "fa-seedling",
+  potato: "fa-circle",
+  maize: "fa-leaf",
+  jute: "fa-spa",
+  other: "fa-virus",
+};
+
+function DiseasesTab() {
+  const [diseases, setDiseases] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingDisease, setEditingDisease] = useState(null);
+  const [form, setForm] = useState(BLANK_DISEASE);
+  const [imgFile, setImgFile] = useState(null);
+  const [imgTab, setImgTab] = useState("url");
+  const [saving, setSaving] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [toast, setToast] = useState("");
+  const [filterSev, setFilterSev] = useState("all");
+  const [filterCrop, setFilterCrop] = useState("all");
+
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(""), 3000);
+  };
+  const upd = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+
+  const loadDiseases = async () => {
+    try {
+      const data = await apiCall("/admin/diseases");
+      setDiseases(data.diseases || []);
+    } catch {
+      setDiseases([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadDiseases();
+  }, []);
+
+  const openAdd = () => {
+    setEditingDisease(null);
+    setForm(BLANK_DISEASE);
+    setImgFile(null);
+    setImgTab("url");
+    setModalOpen(true);
+  };
+
+  const openEdit = (d) => {
+    setEditingDisease(d);
+    setForm({ ...d, symptoms: (d.symptoms || []).join(", ") });
+    setImgFile(null);
+    setImgTab("url");
+    setModalOpen(true);
+  };
+
+  const handleSave = async () => {
+    if (!form.name.trim()) {
+      showToast("Disease এর নাম দাও।");
+      return;
+    }
+    if (!imgFile && !form.img.trim()) {
+      showToast("Image file বা URL দাও।");
+      return;
+    }
+
+    setSaving(true);
+    const fd = new FormData();
+    fd.append("name", form.name.trim());
+    fd.append("crop", form.crop);
+    fd.append("severity", form.severity);
+    fd.append("desc", form.desc);
+    fd.append("symptoms", form.symptoms);
+    fd.append("treatment", form.treatment);
+    fd.append("prevention", form.prevention);
+    if (imgFile) fd.append("img", imgFile);
+    else fd.append("img", form.img);
+
+    try {
+      const token = localStorage.getItem("kb_token");
+      const url = editingDisease
+        ? `http://localhost:5000/api/admin/diseases/${editingDisease._id}`
+        : `http://localhost:5000/api/admin/diseases`;
+      const res = await fetch(url, {
+        method: editingDisease ? "PUT" : "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      if (editingDisease) {
+        setDiseases((prev) =>
+          prev.map((d) => (d._id === editingDisease._id ? data.disease : d)),
+        );
+        showToast("Disease update হয়েছে ✓");
+      } else {
+        setDiseases((prev) => [data.disease, ...prev]);
+        showToast("নতুন disease যোগ হয়েছে ✓");
+      }
+      setModalOpen(false);
+    } catch (err) {
+      showToast(`Error: ${err.message}`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await apiCall(`/admin/diseases/${id}`, { method: "DELETE" });
+    } catch {}
+    setDiseases((prev) => prev.filter((d) => d._id !== id));
+    setDeleteId(null);
+    showToast("Disease deleted.");
+  };
+
+  const filtered = diseases.filter((d) => {
+    const matchSev = filterSev === "all" || d.severity === filterSev;
+    const matchCrop = filterCrop === "all" || d.crop === filterCrop;
+    return matchSev && matchCrop;
+  });
+
+  return (
+    <div className="ad-tab-content">
+      {toast && <div className="ad-toast">{toast}</div>}
+
+      <div className="ad-tab-header">
+        <div>
+          <h2>Disease Library</h2>
+          <p>Crop diseases add/edit করো — farmer dashboard এ দেখাবে</p>
+        </div>
+        <button className="ad-btn-primary" onClick={openAdd}>
+          <i className="fa-solid fa-plus" /> Add Disease
+        </button>
+      </div>
+
+      {/* Filters */}
+      <div className="ad-filters-bar" style={{ marginBottom: 20 }}>
+        <div className="ad-filter-pills">
+          <span style={{ fontSize: 13, color: "#6b7280", fontWeight: 600 }}>
+            Severity:
+          </span>
+          {["all", "high", "medium", "low"].map((s) => (
+            <button
+              key={s}
+              className={`ad-pill ${filterSev === s ? "active" : ""}`}
+              onClick={() => setFilterSev(s)}
+            >
+              {s === "all"
+                ? "All"
+                : `${SEV_COLOR[s]?.dot} ${s.charAt(0).toUpperCase() + s.slice(1)}`}
+            </button>
+          ))}
+        </div>
+        <div className="ad-filter-pills" style={{ marginTop: 8 }}>
+          <span style={{ fontSize: 13, color: "#6b7280", fontWeight: 600 }}>
+            Crop:
+          </span>
+          {["all", ...CROP_OPTIONS].map((c) => (
+            <button
+              key={c}
+              className={`ad-pill ${filterCrop === c ? "active" : ""}`}
+              onClick={() => setFilterCrop(c)}
+            >
+              {c === "all" ? "All Crops" : c}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Grid */}
+      {loading ? (
+        <div className="ad-loading-state">Loading diseases…</div>
+      ) : filtered.length === 0 ? (
+        <div
+          style={{
+            textAlign: "center",
+            padding: "60px 20px",
+            color: "#9ca3af",
+          }}
+        >
+          <i
+            className="fa-solid fa-virus"
+            style={{ fontSize: 48, marginBottom: 16, display: "block" }}
+          />
+          <p>কোনো disease নেই। "Add Disease" দিয়ে যোগ করো।</p>
+        </div>
+      ) : (
+        <div className="ad-crop-grid">
+          {filtered.map((d) => {
+            const sev = SEV_COLOR[d.severity] || SEV_COLOR.medium;
+            return (
+              <div key={d._id} className="ad-crop-card">
+                <div className="ad-crop-card-img-wrap">
+                  <img
+                    src={
+                      d.img ||
+                      "https://via.placeholder.com/300x160?text=No+Image"
+                    }
+                    alt={d.name}
+                    onError={(e) =>
+                      (e.target.src =
+                        "https://via.placeholder.com/300x160?text=No+Image")
+                    }
+                  />
+                  <span
+                    className="ad-crop-type-tag"
+                    style={{
+                      background: sev.bg,
+                      color: sev.text,
+                      border: `1px solid ${sev.border}`,
+                    }}
+                  >
+                    {sev.dot} {d.severity}
+                  </span>
+                </div>
+                <div className="ad-crop-card-body">
+                  <div className="ad-crop-card-name">{d.name}</div>
+                  <div className="ad-crop-card-meta">
+                    <span>
+                      <i
+                        className={`fa-solid ${CROP_ICON[d.crop] || "fa-seedling"}`}
+                      />{" "}
+                      {d.crop}
+                    </span>
+                  </div>
+                  {d.symptoms && d.symptoms.length > 0 && (
+                    <div className="ad-crop-card-tags">
+                      {d.symptoms.slice(0, 2).map((s) => (
+                        <span key={s} className="ad-crop-tag">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="ad-crop-card-actions">
+                  <button className="ad-btn-edit" onClick={() => openEdit(d)}>
+                    <i className="fa-solid fa-pen" /> Edit
+                  </button>
+                  <button
+                    className="ad-btn-delete"
+                    onClick={() => setDeleteId(d._id)}
+                  >
+                    <i className="fa-solid fa-trash" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Add/Edit Modal */}
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={
+          editingDisease ? `Edit: ${editingDisease.name}` : "Add New Disease"
+        }
+      >
+        <div className="ad-form-grid">
+          {/* Name */}
+          <div className="ad-form-group ad-fg-full">
+            <label>Disease Name *</label>
+            <input
+              type="text"
+              value={form.name}
+              onChange={(e) => upd("name", e.target.value)}
+              placeholder="e.g. Leaf Blight"
+            />
+          </div>
+
+          {/* Crop */}
+          <div className="ad-form-group">
+            <label>Affected Crop</label>
+            <select
+              value={form.crop}
+              onChange={(e) => upd("crop", e.target.value)}
+            >
+              {CROP_OPTIONS.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Severity */}
+          <div className="ad-form-group">
+            <label>Severity</label>
+            <select
+              value={form.severity}
+              onChange={(e) => upd("severity", e.target.value)}
+            >
+              {SEV_OPTIONS.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Image */}
+          <div className="ad-form-group ad-fg-full">
+            <label>Disease Image *</label>
+            <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+              {["url", "upload"].map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => {
+                    setImgTab(t);
+                    setImgFile(null);
+                    upd("img", "");
+                  }}
+                  style={{
+                    padding: "6px 16px",
+                    borderRadius: 6,
+                    border: "1.5px solid",
+                    borderColor: imgTab === t ? "#16a34a" : "#e5e7eb",
+                    background: imgTab === t ? "#dcfce7" : "white",
+                    color: imgTab === t ? "#16a34a" : "#6b7280",
+                    fontWeight: 600,
+                    fontSize: 13,
+                    cursor: "pointer",
+                  }}
+                >
+                  {t === "url" ? "🔗 Image URL" : "📁 File Upload"}
+                </button>
+              ))}
+            </div>
+            {imgTab === "url" ? (
+              <>
+                <input
+                  type="url"
+                  value={form.img}
+                  onChange={(e) => upd("img", e.target.value)}
+                  placeholder="https://..."
+                />
+                {form.img && (
+                  <img
+                    src={form.img}
+                    alt="preview"
+                    className="ad-img-preview"
+                    onError={(e) => (e.target.style.display = "none")}
+                  />
+                )}
+              </>
+            ) : (
+              <>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const f = e.target.files[0];
+                    if (f) setImgFile(f);
+                  }}
+                  style={{ padding: "8px 0" }}
+                />
+                {imgFile && (
+                  <img
+                    src={URL.createObjectURL(imgFile)}
+                    alt="preview"
+                    className="ad-img-preview"
+                  />
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Description */}
+          <div className="ad-form-group ad-fg-full">
+            <label>Description</label>
+            <textarea
+              value={form.desc}
+              onChange={(e) => upd("desc", e.target.value)}
+              rows={3}
+              placeholder="Disease সম্পর্কে বিবরণ…"
+            />
+          </div>
+
+          {/* Symptoms */}
+          <div className="ad-form-group ad-fg-full">
+            <label>
+              Symptoms{" "}
+              <span className="ad-label-hint">(comma দিয়ে আলাদা করো)</span>
+            </label>
+            <input
+              type="text"
+              value={form.symptoms}
+              onChange={(e) => upd("symptoms", e.target.value)}
+              placeholder="e.g. Yellow lesions, Wilting, Brown edges"
+            />
+          </div>
+
+          {/* Treatment */}
+          <div className="ad-form-group ad-fg-full">
+            <label>Treatment</label>
+            <textarea
+              value={form.treatment}
+              onChange={(e) => upd("treatment", e.target.value)}
+              rows={2}
+              placeholder="চিকিৎসা পদ্ধতি…"
+            />
+          </div>
+
+          {/* Prevention */}
+          <div className="ad-form-group ad-fg-full">
+            <label>Prevention</label>
+            <textarea
+              value={form.prevention}
+              onChange={(e) => upd("prevention", e.target.value)}
+              rows={2}
+              placeholder="প্রতিরোধ পদ্ধতি…"
+            />
+          </div>
+        </div>
+
+        <div className="ad-modal-footer">
+          <button className="ad-btn-ghost" onClick={() => setModalOpen(false)}>
+            Cancel
+          </button>
+          <button
+            className="ad-btn-primary"
+            onClick={handleSave}
+            disabled={saving}
+          >
+            {saving ? (
+              <>
+                <i className="fa-solid fa-spinner fa-spin" /> Saving…
+              </>
+            ) : (
+              <>
+                <i className="fa-solid fa-floppy-disk" /> Save Disease
+              </>
+            )}
+          </button>
+        </div>
+      </Modal>
+
+      {/* Delete Confirm */}
+      <Modal
+        open={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        title="Confirm Delete"
+      >
+        <p style={{ marginBottom: 20 }}>
+          এই disease delete করবে? Farmer dashboard থেকে সরে যাবে।
+        </p>
+        <div className="ad-modal-footer">
+          <button className="ad-btn-ghost" onClick={() => setDeleteId(null)}>
+            Cancel
+          </button>
+          <button
+            className="ad-btn-danger"
+            onClick={() => handleDelete(deleteId)}
+          >
+            <i className="fa-solid fa-trash" /> Delete
+          </button>
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
    TAB 6 — CONTENT BLOCKS
-   Controls: Dashboard hero images, alert banners, advisory text
 ══════════════════════════════════════════════════════════════ */
 const DEFAULT_BLOCKS = [
   {
@@ -1961,6 +2512,7 @@ const NAV_ITEMS = [
   { id: "marketplace", icon: "fa-store", label: "Marketplace" },
   { id: "experts", icon: "fa-user-graduate", label: "Experts" },
   { id: "content", icon: "fa-pen-to-square", label: "Content" },
+  { id: "diseases", icon: "fa-virus", label: "Diseases" },
 ];
 
 export default function AdminDashboard() {
@@ -1980,6 +2532,7 @@ export default function AdminDashboard() {
     marketplace: <MarketplaceTab />,
     experts: <ExpertsTab />,
     content: <ContentTab />,
+    diseases: <DiseasesTab />,
   };
 
   return (
