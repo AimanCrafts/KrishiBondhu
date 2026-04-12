@@ -390,7 +390,7 @@ export default function Marketplace() {
           </div>
         </section>
 
-        {/* ADMIN NOTICE (if set in admin dashboard) */}
+        {/* ADMIN NOTICE */}
         {marketNotice && (
           <div className="bm-notice-banner">
             <i className="fa-solid fa-circle-info" />{" "}
