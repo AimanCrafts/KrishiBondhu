@@ -21,6 +21,8 @@ import CropDetail from "./jsx_files/farmerDashboard_page/crop_detail";
 import CropDisease from "./jsx_files/farmerDashboard_page/crop_disease";
 import DiseaseDetail from "./jsx_files/farmerDashboard_page/disease_detail";
 import Settings from "./jsx_files/farmerDashboard_page/settings";
+import TermsAndConditions from "./jsx_files/legal_page/terms_and_conditions";
+import PrivacyPolicy from "./jsx_files/legal_page/privacy_policy";
 
 function HomePage() {
   return (
@@ -31,6 +33,8 @@ function HomePage() {
     </>
   );
 }
+
+// ← REMOVED the two floating <Route> lines that were here
 
 function App() {
   return (
@@ -70,6 +74,10 @@ function App() {
               </PublicOnlyRoute>
             }
           />
+
+          {/* ── Legal (open to all) ── */}
+          <Route path="/terms" element={<TermsAndConditions />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
 
           {/* ── Farmer ── */}
           <Route
@@ -120,7 +128,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/settings"
             element={
@@ -181,7 +188,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          
 
           {/* ── Catch-all ── */}
           <Route path="*" element={<Navigate to="/" replace />} />
