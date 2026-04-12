@@ -1,4 +1,3 @@
-// src/jsx_files/buyer_page/farmer_directory.jsx
 import { useState, useEffect, useRef } from "react";
 import BuyerLayout from "../../components/BuyerLayout";
 import "../../css_files/buyer_page/farmer_directory.css";
