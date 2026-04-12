@@ -1,21 +1,17 @@
-/* src/css_files/farmerDashboard_page/crop_management.css */
-/* ─────────────────────────────────────────────────────────────
-   Original design সম্পূর্ণ same — শুধু skeleton loading
-   এবং fallback note এর CSS যোগ হয়েছে নিচে
-───────────────────────────────────────────────────────────── */
+/* src/css_files/farmerDashboard_page/crop_disease.css */
+/* সব class এ .cd- prefix */
 
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap");
 
-/* ROOT */
-.cm-root {
+.cd-root {
   font-family: "Inter", sans-serif;
   background: #f5faf5;
-  color: #111111;
+  color: #111;
   min-height: 100vh;
 }
 
-/* HERO */
-.cm-hero {
+/* ── Hero ─────────────────────────────────────────────────── */
+.cd-hero {
   position: relative;
   width: 100%;
   min-height: 320px;
@@ -25,8 +21,7 @@
   padding: 60px 8%;
   overflow: hidden;
 }
-
-.cm-hero-bg {
+.cd-hero-bg {
   position: absolute;
   inset: 0;
   background:
@@ -42,14 +37,12 @@
     );
   pointer-events: none;
 }
-
-.cm-hero-content {
+.cd-hero-content {
   position: relative;
   z-index: 1;
-  max-width: 640px;
+  max-width: 600px;
 }
-
-.cm-hero-badge {
+.cd-hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -63,36 +56,31 @@
   margin-bottom: 18px;
   backdrop-filter: blur(8px);
 }
-
-.cm-hero-title {
+.cd-hero-title {
   font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(32px, 5vw, 56px);
+  font-size: clamp(30px, 5vw, 52px);
   font-weight: 700;
   color: #fff;
   line-height: 1.15;
   margin-bottom: 14px;
   letter-spacing: -0.5px;
 }
-
-.cm-hero-title span {
+.cd-hero-title span {
   color: #86efac;
 }
-
-.cm-hero-sub {
+.cd-hero-sub {
   font-size: 16px;
   color: rgba(255, 255, 255, 0.72);
   line-height: 1.7;
-  max-width: 500px;
+  max-width: 480px;
 }
-
-.cm-hero-stats {
+.cd-hero-stats {
   display: flex;
   gap: 28px;
   margin-top: 30px;
   flex-wrap: wrap;
 }
-
-.cm-hero-stat {
+.cd-hero-stat {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -100,8 +88,7 @@
   font-size: 13px;
   font-weight: 600;
 }
-
-.cm-hero-stat-icon {
+.cd-hero-stat-icon {
   width: 34px;
   height: 34px;
   background: rgba(255, 255, 255, 0.1);
@@ -114,29 +101,47 @@
   color: #86efac;
 }
 
-/* MAIN */
-.cm-main {
+/* ── Main ─────────────────────────────────────────────────── */
+.cd-main {
   max-width: 1300px;
   margin: 0 auto;
   padding: 48px 8% 80px;
 }
 
-/* CONTROLS */
-.cm-controls {
+/* ── Error ────────────────────────────────────────────────── */
+.cd-error-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fef3c7;
+  border: 1.5px solid #fde68a;
+  border-radius: 12px;
+  padding: 16px 20px;
+  color: #92400e;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+.cd-error-box i {
+  font-size: 18px;
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
+/* ── Controls ─────────────────────────────────────────────── */
+.cd-controls {
   display: flex;
   gap: 14px;
   margin-bottom: 36px;
   align-items: center;
   flex-wrap: wrap;
 }
-
-.cm-search-wrap {
+.cd-search-wrap {
   flex: 1;
   min-width: 240px;
   position: relative;
 }
-
-.cm-search-wrap i {
+.cd-search-wrap i {
   position: absolute;
   left: 18px;
   top: 50%;
@@ -145,8 +150,7 @@
   font-size: 14px;
   pointer-events: none;
 }
-
-.cm-search-wrap input {
+.cd-search-wrap input {
   width: 100%;
   padding: 14px 18px 14px 46px;
   border-radius: 50px;
@@ -161,21 +165,13 @@
     border-color 0.3s,
     box-shadow 0.3s;
 }
-
-.cm-search-wrap input::placeholder {
-  color: #555;
-  opacity: 0.6;
-}
-
-.cm-search-wrap input:focus {
+.cd-search-wrap input:focus {
   border-color: #4caf50;
   box-shadow:
     0 4px 20px rgba(0, 0, 0, 0.07),
     0 0 0 3px rgba(76, 175, 80, 0.12);
 }
-
-/* ── নতুন: search clear button ── */
-.cm-search-clear {
+.cd-search-clear {
   position: absolute;
   right: 16px;
   top: 50%;
@@ -191,20 +187,13 @@
   font-size: 11px;
   color: #6b7280;
   cursor: pointer;
-  transition: background 0.18s;
 }
-.cm-search-clear:hover {
-  background: #d1d5db;
-  color: #374151;
-}
-
-.cm-filter-pills {
+.cd-filter-pills {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
-
-.cm-pill {
+.cd-pill {
   padding: 10px 18px;
   border-radius: 50px;
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -217,66 +206,50 @@
   transition: all 0.25s ease;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
 }
-
-.cm-pill:hover {
+.cd-pill:hover {
   border-color: #4caf50;
   color: #2e7d32;
   transform: translateY(-2px);
 }
-
-.cm-pill:focus {
-  outline: none;
-}
-
-.cm-pill.active {
+.cd-pill.active {
   background: #2e7d32;
   color: #fff;
   border-color: #2e7d32;
   box-shadow: 0 4px 16px rgba(46, 125, 50, 0.3);
 }
-
-.cm-results-meta {
+.cd-results-meta {
   margin-bottom: 22px;
   font-size: 14px;
   color: #555;
   font-weight: 500;
 }
-
-.cm-results-meta span {
+.cd-results-meta span {
   font-weight: 700;
   color: #2e7d32;
 }
 
-/* ── নতুন: fallback note ── */
-.cm-fallback-note {
-  font-weight: 400;
-  color: #9ca3af;
-  font-size: 13px;
-}
-
-/* GRID */
-.cm-grid {
+/* ── Grid ─────────────────────────────────────────────────── */
+.cd-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 22px;
 }
 
-/* CARD */
-.cm-card {
+/* ── Card ─────────────────────────────────────────────────── */
+.cd-card {
   position: relative;
-  height: 300px;
+  height: 280px;
   border-radius: 24px;
   overflow: hidden;
   cursor: pointer;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
-  animation: cmFadeUp 0.45s ease both;
+  animation: cdFadeUp 0.45s ease both;
   transition:
     transform 0.35s ease,
     box-shadow 0.35s ease;
 }
-
-@keyframes cmFadeUp {
+@keyframes cdFadeUp {
   from {
     opacity: 0;
     transform: translateY(22px);
@@ -286,39 +259,33 @@
     transform: translateY(0);
   }
 }
-
-.cm-card:hover {
+.cd-card:hover {
   transform: translateY(-8px) scale(1.01);
   box-shadow: 0 24px 56px rgba(0, 0, 0, 0.22);
 }
-
-.cm-card-img {
+.cd-card-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
-  display: block;
 }
-
-.cm-card:hover .cm-card-img {
+.cd-card:hover .cd-card-img {
   transform: scale(1.08);
 }
-
-.cm-card-grad {
+.cd-card-grad {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.88) 0%,
-    rgba(0, 0, 0, 0.4) 45%,
-    rgba(0, 0, 0, 0.1) 100%
+    rgba(0, 0, 0, 0.45) 45%,
+    rgba(0, 0, 0, 0.15) 100%
   );
   transition: background 0.35s ease;
 }
-
-.cm-card:hover .cm-card-grad {
+.cd-card:hover .cd-card-grad {
   background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.92) 0%,
@@ -327,39 +294,8 @@
   );
 }
 
-/* BADGES */
-.cm-season-badge {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  padding: 5px 13px;
-  border-radius: 50px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(8px);
-  z-index: 2;
-}
-
-.cm-season-badge.kharif {
-  background: rgba(22, 163, 74, 0.82);
-  color: #fff;
-}
-.cm-season-badge.rabi {
-  background: rgba(59, 130, 246, 0.82);
-  color: #fff;
-}
-.cm-season-badge.zaid {
-  background: rgba(217, 119, 6, 0.85);
-  color: #fff;
-}
-.cm-season-badge.yearround {
-  background: rgba(139, 92, 246, 0.82);
-  color: #fff;
-}
-
-.cm-type-tag {
+/* Crop tag (top-left) */
+.cd-crop-tag {
   position: absolute;
   top: 14px;
   left: 14px;
@@ -377,14 +313,41 @@
   text-transform: capitalize;
   z-index: 2;
 }
-
-.cm-type-tag i {
+.cd-crop-tag i {
   font-size: 10px;
   color: #86efac;
 }
 
-/* CARD BODY */
-.cm-card-body {
+/* Severity badge (top-right) */
+.cd-sev-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 5px 13px;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  z-index: 2;
+}
+.cd-sev-high {
+  background: rgba(220, 38, 38, 0.82);
+  color: #fff;
+}
+.cd-sev-medium {
+  background: rgba(217, 119, 6, 0.85);
+  color: #fff;
+}
+.cd-sev-low {
+  background: rgba(22, 163, 74, 0.82);
+  color: #fff;
+}
+
+/* Card body */
+.cd-card-body {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -392,29 +355,15 @@
   padding: 18px 20px;
   z-index: 2;
 }
-
-.cm-card-title {
+.cd-card-title {
   font-family: "Space Grotesk", sans-serif;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   line-height: 1.2;
 }
-
-.cm-card-region {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.cm-card-region i {
-  font-size: 10px;
-}
-
-.cm-card-desc {
+.cd-card-desc {
   font-size: 12.5px;
   color: rgba(255, 255, 255, 0.72);
   line-height: 1.55;
@@ -427,19 +376,17 @@
     opacity 0.35s ease,
     margin-bottom 0.35s ease;
 }
-.cm-card:hover .cm-card-desc {
+.cd-card:hover .cd-card-desc {
   max-height: 60px;
   opacity: 1;
   margin-bottom: 12px;
 }
-
-.cm-card-tags {
+.cd-symptoms {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
 }
-
-.cm-card-tag {
+.cd-sym-tag {
   font-size: 10px;
   padding: 3px 10px;
   border-radius: 50px;
@@ -450,8 +397,8 @@
   backdrop-filter: blur(4px);
 }
 
-/* ARROW */
-.cm-card-arrow {
+/* Arrow */
+.cd-card-arrow {
   position: absolute;
   bottom: 18px;
   right: 18px;
@@ -471,64 +418,59 @@
     opacity 0.3s ease,
     transform 0.3s ease;
 }
-.cm-card:hover .cm-card-arrow {
+.cd-card:hover .cd-card-arrow {
   opacity: 1;
   transform: scale(1);
 }
 
-/* EMPTY */
-.cm-empty {
+/* Empty */
+.cd-empty {
   grid-column: 1 / -1;
   text-align: center;
   padding: 80px 20px;
 }
-.cm-empty span {
+.cd-empty span {
   font-size: 52px;
   margin-bottom: 16px;
   display: block;
 }
-.cm-empty h3 {
+.cd-empty h3 {
   font-family: "Space Grotesk", sans-serif;
   font-size: 22px;
   font-weight: 700;
   color: #111;
   margin-bottom: 8px;
 }
-.cm-empty p {
+.cd-empty p {
   font-size: 15px;
   color: #555;
 }
 
-/* ──────────────────────────────────────────────────────────────
-   নতুন: SKELETON LOADING CARDS
-────────────────────────────────────────────────────────────── */
-.cm-card-skeleton {
+/* ── Skeleton ─────────────────────────────────────────────── */
+.cd-card-skeleton {
   cursor: default;
   animation: none !important;
   background: #e8f5e9;
 }
-.cm-card-skeleton:hover {
+.cd-card-skeleton:hover {
   transform: none !important;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07) !important;
 }
-
-.cm-skeleton-img {
+.cd-skeleton-img {
   position: absolute;
   inset: 0;
   background: linear-gradient(90deg, #d1fae5 25%, #a7f3d0 50%, #d1fae5 75%);
   background-size: 200% 100%;
-  animation: cm-shimmer 1.4s infinite;
+  animation: cd-shimmer 1.4s infinite;
 }
-
-.cm-skeleton-body {
+.cd-skeleton-body {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   padding: 20px;
 }
-
-.cm-skeleton-line {
+.cd-skeleton-line {
   border-radius: 6px;
   background: linear-gradient(
     90deg,
@@ -537,24 +479,23 @@
     rgba(255, 255, 255, 0.5) 75%
   );
   background-size: 200% 100%;
-  animation: cm-shimmer 1.4s infinite;
+  animation: cd-shimmer 1.4s infinite;
   margin-bottom: 10px;
 }
-.cm-sk-title {
+.cd-sk-title {
   height: 20px;
   width: 60%;
 }
-.cm-sk-sub {
+.cd-sk-sub {
   height: 12px;
   width: 40%;
   margin-bottom: 12px;
 }
-
-.cm-skeleton-tags {
+.cd-skeleton-tags {
   display: flex;
   gap: 8px;
 }
-.cm-skeleton-tag {
+.cd-skeleton-tag {
   height: 20px;
   width: 60px;
   border-radius: 50px;
@@ -565,10 +506,9 @@
     rgba(255, 255, 255, 0.4) 75%
   );
   background-size: 200% 100%;
-  animation: cm-shimmer 1.4s infinite;
+  animation: cd-shimmer 1.4s infinite;
 }
-
-@keyframes cm-shimmer {
+@keyframes cd-shimmer {
   0% {
     background-position: 200% 0;
   }
@@ -577,20 +517,20 @@
   }
 }
 
-/* RESPONSIVE */
+/* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .cm-hero {
+  .cd-hero {
     padding: 48px 6% 40px;
     min-height: auto;
   }
-  .cm-main {
+  .cd-main {
     padding: 32px 6% 60px;
   }
-  .cm-controls {
+  .cd-controls {
     flex-direction: column;
     align-items: stretch;
   }
-  .cm-grid {
+  .cd-grid {
     grid-template-columns: 1fr;
   }
 }
