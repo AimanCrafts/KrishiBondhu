@@ -1,24 +1,21 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { getSession, logout } from "../../utils/authStorage";
+import { useAuth } from "../../context/AuthContext";
 import "../../css_files/farmerDashboard_page/farmerDashboard.css";
-
-const forecast = [
-  { day: "Today", icon: "⛅", hi: 28, lo: 22, rain: "0%" },
-  { day: "Thu", icon: "🌧", hi: 26, lo: 20, rain: "70%" },
-  { day: "Fri", icon: "🌦", hi: 27, lo: 21, rain: "40%" },
-  { day: "Sat", icon: "☀️", hi: 31, lo: 23, rain: "5%" },
-  { day: "Sun", icon: "☀️", hi: 33, lo: 24, rain: "0%" },
-  { day: "Mon", icon: "⛅", hi: 30, lo: 22, rain: "15%" },
-  { day: "Tue", icon: "🌦", hi: 28, lo: 21, rain: "35%" },
-];
+import NotificationBell from "../../components/NotificationBell";
 
 export default function FarmerDashboard() {
   const navigate = useNavigate();
-  const session = getSession();
-  const user = session || {};
-  const firstName = user.name ? user.name.split(" ")[0] : "Farmer";
-  const location = user.profile
+  const { user, logout: authLogout } = useAuth();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login", { replace: true });
+    }
+  }, [user, navigate]);
+
+  const firstName = user?.name ? user.name.split(" ")[0] : "Farmer";
+  const location = user?.profile
     ? `${user.profile.district || ""}, ${user.profile.division || ""}`
     : "Bangladesh";
   const avatarLetter = firstName.charAt(0).toUpperCase();
@@ -28,6 +25,9 @@ export default function FarmerDashboard() {
   const [todayDate, setTodayDate] = useState("");
   const [cropProgWidth, setCropProgWidth] = useState("0%");
   const revealRefs = useRef([]);
+
+  const [forecast, setForecast] = useState([]);
+  const [currentWeather, setCurrentWeather] = useState(null);
 
   useEffect(() => {
     const d = new Date();
@@ -66,6 +66,56 @@ export default function FarmerDashboard() {
     return () => obs.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!user) return;
+    const district = user.profile?.district || "Dhaka";
+    console.log("District:", district);
+    console.log("User:", user);
+    const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
+
+    // Current Weather
+    fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${district},BD&appid=${API_KEY}&units=metric`,
+    )
+      .then((res) => res.json())
+      .then((data) => setCurrentWeather(data));
+
+    // 7-day Forecast
+    fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?q=${district},BD&appid=${API_KEY}&units=metric`,
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.list) return;
+        const daily = data.list
+          .filter((_, i) => i % 8 === 0)
+          .slice(0, 7)
+          .map((item) => ({
+            day: new Date(item.dt_txt).toLocaleDateString("en-US", {
+              weekday: "short",
+            }),
+            icon: getWeatherIcon(item.weather[0].main),
+            hi: Math.round(item.main.temp_max),
+            lo: Math.round(item.main.temp_min),
+            rain: item.pop ? `${Math.round(item.pop * 100)}%` : "0%",
+          }));
+        setForecast(daily);
+      });
+  }, [user]);
+
+  const getWeatherIcon = (main) => {
+    const icons = {
+      Clear: "☀️",
+      Clouds: "⛅",
+      Rain: "🌧",
+      Drizzle: "🌦",
+      Thunderstorm: "⛈️",
+      Snow: "❄️",
+      Mist: "🌫️",
+    };
+    return icons[main] || "🌤️";
+  };
+
   const addRevealRef = (el) => {
     if (el && !revealRefs.current.includes(el)) {
       revealRefs.current.push(el);
@@ -73,6 +123,13 @@ export default function FarmerDashboard() {
   };
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
+
+  const handleLogout = () => {
+    authLogout();
+    navigate("/login", { replace: true });
+  };
+
+  if (!user) return null;
 
   return (
     <>
@@ -95,10 +152,7 @@ export default function FarmerDashboard() {
             <span>{todayDate || "Loading…"}</span>
           </div>
           <div className="dashboard-top-right">
-            <button className="dashboard-notif-btn" title="Notifications">
-              <i className="fa-regular fa-bell"></i>
-              <span className="dashboard-notif-dot"></span>
-            </button>
+            <NotificationBell />
             <div className="dashboard-avatar-wrap">
               <div className="dashboard-avatar">{avatarLetter}</div>
               <div>
@@ -134,16 +188,16 @@ export default function FarmerDashboard() {
           <a href="#" className="active">
             <i className="fa-solid fa-house"></i> Dashboard
           </a>
-          <a href="#">
-            <i className="fa-solid fa-tractor"></i> My Crops
-          </a>
-          <a href="#">
+          <a
+            onClick={() => navigate("/crop_library")}
+            style={{ cursor: "pointer" }}
+          >
             <i className="fa-solid fa-seedling"></i> Crop Library
           </a>
-          <a href="#">
-            <i className="fa-solid fa-cloud-rain"></i> Weather Advisory
-          </a>
-          <a href="#">
+          <a
+            onClick={() => navigate("/crop_disease")}
+            style={{ cursor: "pointer" }}
+          >
             <i className="fa-solid fa-bug"></i> Pest &amp; Disease
           </a>
           <span className="dashboard-sidebar-section-label">Tools</span>
@@ -156,8 +210,22 @@ export default function FarmerDashboard() {
           <a href="#">
             <i className="fa-solid fa-user-pen"></i> Consult Expert
           </a>
-          <a href="#">
+          <a
+            onClick={() => navigate("/settings")}
+            style={{ cursor: "pointer" }}
+          >
             <i className="fa-solid fa-gear"></i> Settings
+          </a>
+          <div className="dashboard-sidebar-section-label">Account</div>
+          <a
+            onClick={handleLogout}
+            style={{ cursor: "pointer", color: "#e53935" }}
+          >
+            <i
+              className="fa-solid fa-right-from-bracket"
+              style={{ color: "#e53935" }}
+            ></i>{" "}
+            Logout
           </a>
         </nav>
 
@@ -272,34 +340,38 @@ export default function FarmerDashboard() {
               <div className="dashboard-weather-today">
                 <div>
                   <div className="dashboard-weather-location">
-                    <i className="fa-solid fa-location-dot"></i>{location}
+                    <i className="fa-solid fa-location-dot"></i>
+                    {location}
                     Division
                   </div>
                   <div className="dashboard-weather-desc">
-                    Partly Cloudy,
-                    <br />
-                    Light Breeze
+                    {currentWeather?.weather?.[0]?.description}
                   </div>
                   <div className="dashboard-weather-meta">
                     <div className="dashboard-weather-meta-item">
-                      <i className="fa-solid fa-droplet"></i>Humidity 74%
+                      <i className="fa-solid fa-droplet"></i>Humidity{" "}
+                      {currentWeather?.main?.humidity}%
                     </div>
                     <div className="dashboard-weather-meta-item">
-                      <i className="fa-solid fa-wind"></i>Wind 12 km/h
+                      <i className="fa-solid fa-wind"></i>Wind{" "}
+                      {Math.round(currentWeather?.wind?.speed * 3.6)} km/h
                     </div>
                     <div className="dashboard-weather-meta-item">
                       <i className="fa-solid fa-eye"></i>Visibility 8 km
                     </div>
                     <div className="dashboard-weather-meta-item">
-                      <i className="fa-solid fa-cloud-rain"></i>Rain 0%
+                      <i className="fa-solid fa-cloud-rain"></i>
                     </div>
                   </div>
                 </div>
                 <div>
                   <div className="dashboard-weather-temp-big">
-                    28<sup>°C</sup>
+                    {Math.round(currentWeather?.main?.temp)}
+                    <sup>°C</sup>
                   </div>
-                  <div className="dashboard-weather-feel">Feels like 31°C</div>
+                  <div className="dashboard-weather-feel">
+                    Feels like {Math.round(currentWeather?.main?.feels_like)}°C
+                  </div>
                 </div>
               </div>
               <div className="dashboard-forecast-strip">
