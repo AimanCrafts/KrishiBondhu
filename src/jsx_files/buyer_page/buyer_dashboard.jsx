@@ -112,8 +112,14 @@ const STATUS_META = {
    MAIN COMPONENT
 ══════════════════════════════════ */
 export default function BuyerDashboard() {
-  const { user, logout } = useAuth();
+  const { user, logout: authLogout } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login", { replace: true });
+    }
+  }, [user, navigate]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [alertVisible, setAlertVisible] = useState(true);
@@ -122,6 +128,7 @@ export default function BuyerDashboard() {
   const [barsAnimated, setBarsAnimated] = useState(false);
   const revealRefs = useRef([]);
 
+  /* Derive user info from auth context */
   const companyName =
     user?.profile?.companyName || user?.name || "Your Company";
   const contactPerson = user?.profile?.contactPerson || user?.name || "User";
@@ -169,7 +176,7 @@ export default function BuyerDashboard() {
   };
 
   const handleLogout = () => {
-    logout();
+    authLogout();
     navigate("/login", { replace: true });
   };
 
