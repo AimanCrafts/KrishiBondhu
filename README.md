@@ -366,15 +366,8 @@ npm run dev        # Start frontend dev server
 | Name | Role |
 |------|------|
 | **Abdur Rahman Aiman** | Lead Developer & UI Designer |
-| **Contributor 1** | Backend Developer |
-| **Contributor 2** | Frontend Developer |
-| **Contributor 3** | Database & API Integration |
-
----
-
-## License
-
-This project is licensed under the [ISC License](LICENSE).
+| **Munawar Mahtab Moon** | Backend Developer |
+| **Raisul Islam Sifat** | Database & API Integration |
 
 ---
 
@@ -388,4 +381,7 @@ This project is licensed under the [ISC License](LICENSE).
 
 ---
 
-**Made with ❤️ for the farmers of Bangladesh** 🇧🇩
+## License
+
+This project is licensed under the [ISC License](LICENSE).
+
