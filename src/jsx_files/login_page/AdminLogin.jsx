@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-
+import { loginAdmin } from "../../utils/authStorage";
 export default function AdminLogin() {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -16,24 +16,13 @@ export default function AdminLogin() {
     if (!email || !password) return setError("Email and password required.");
 
     setLoading(true);
-    try {
-      const res = await fetch("http://localhost:5000/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      setLoading(false);
+    const result = await loginAdmin(email, password);
+    setLoading(false);
 
-      if (!res.ok) return setError(data.message || "Login failed.");
+    if (!result.success) return setError(result.error);
 
-      localStorage.setItem("kb_token", data.token);
-      login(data.user);
-      navigate("/admin_dashboard", { replace: true });
-    } catch (err) {
-      setLoading(false);
-      setError("Could not reach server. Is the backend running?");
-    }
+    login(result.user);
+    navigate("/admin_dashboard", { replace: true });
   };
 
   return (
