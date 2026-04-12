@@ -1,9 +1,3 @@
-/* ═══════════════════════════════════════════════════════════
-   KrishiBondhu — Settings Page
-   File: css_files/settings_page/settings.css
-═══════════════════════════════════════════════════════════ */
-
-/* ── Tokens (matches admin + farmer dashboard palette) ── */
 :root {
   --st-bg: #f4f6f3;
   --st-white: #ffffff;
@@ -879,11 +873,6 @@
     transform: translateY(0);
   }
 }
-
-/* ══════════════════════════════════════
-   ADMIN — Settings Tab (যদি admin এ add করতে চাও)
-   ফাইল: admin_dashboard.css এ এটুকু append করো
-══════════════════════════════════════ */
 
 /* ══════════════════════════════════════
    RESPONSIVE
