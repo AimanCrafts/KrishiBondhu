@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicOnlyRoute from "./components/PublicOnlyRoute";
 
 import Header from "./jsx_files/home_page/header";
 import Body from "./jsx_files/home_page/body";
@@ -17,6 +17,10 @@ import Marketplace from "./jsx_files/buyer_page/marketplace";
 import Orders from "./jsx_files/buyer_page/orders";
 import FarmerDirectory from "./jsx_files/buyer_page/farmer_directory";
 import BuyerProfile from "./jsx_files/buyer_page/buyer_profile";
+import CropDetail from "./jsx_files/farmerDashboard_page/crop_detail";
+import CropDisease from "./jsx_files/farmerDashboard_page/crop_disease";
+import DiseaseDetail from "./jsx_files/farmerDashboard_page/disease_detail";
+import Settings from "./jsx_files/farmerDashboard_page/settings";
 
 function HomePage() {
   return (
@@ -33,16 +37,45 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Public */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/admin_login" element={<AdminLogin />} />
-          {/* Farmer dashboard */}
+          {/* ── Public ── */}
+          <Route
+            path="/"
+            element={
+              <PublicOnlyRoute>
+                <HomePage />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <PublicOnlyRoute>
+                <Login />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <PublicOnlyRoute>
+                <Signup />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/admin_login"
+            element={
+              <PublicOnlyRoute>
+                <AdminLogin />
+              </PublicOnlyRoute>
+            }
+          />
+
+          {/* ── Farmer ── */}
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute role="farmer">
+              <ProtectedRoute allowedRole="farmer">
                 <FarmerDashboard />
               </ProtectedRoute>
             }
@@ -50,25 +83,66 @@ function App() {
           <Route
             path="/farmer_dashboard"
             element={
-              <ProtectedRoute role="farmer">
+              <ProtectedRoute allowedRole="farmer">
                 <FarmerDashboard />
               </ProtectedRoute>
             }
           />
-          {/* Buyer / Business dashboard */}
           <Route
-            path="/buyer_dashboard"
+            path="/crop_library"
             element={
-              <ProtectedRoute role="business">
-                <BuyerDashboard />
+              <ProtectedRoute allowedRole="farmer">
+                <CropManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/crop_detail/:id"
+            element={
+              <ProtectedRoute allowedRole="farmer">
+                <CropDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/crop_disease"
+            element={
+              <ProtectedRoute allowedRole="farmer">
+                <CropDisease />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/disease_detail/:id"
+            element={
+              <ProtectedRoute allowedRole="farmer">
+                <DiseaseDetail />
               </ProtectedRoute>
             }
           />
 
           <Route
+            path="/settings"
+            element={
+              <ProtectedRoute allowedRole="farmer">
+                <Settings />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ── Buyer ── */}
+          <Route
+            path="/buyer_dashboard"
+            element={
+              <ProtectedRoute allowedRole="business">
+                <BuyerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/buyer/marketplace"
             element={
-              <ProtectedRoute role="business">
+              <ProtectedRoute allowedRole="business">
                 <Marketplace />
               </ProtectedRoute>
             }
@@ -76,7 +150,7 @@ function App() {
           <Route
             path="/buyer/orders"
             element={
-              <ProtectedRoute role="business">
+              <ProtectedRoute allowedRole="business">
                 <Orders />
               </ProtectedRoute>
             }
@@ -84,7 +158,7 @@ function App() {
           <Route
             path="/buyer/farmers"
             element={
-              <ProtectedRoute role="business">
+              <ProtectedRoute allowedRole="business">
                 <FarmerDirectory />
               </ProtectedRoute>
             }
@@ -92,23 +166,13 @@ function App() {
           <Route
             path="/buyer/profile"
             element={
-              <ProtectedRoute role="business">
+              <ProtectedRoute allowedRole="business">
                 <BuyerProfile />
               </ProtectedRoute>
             }
           />
 
-          {/* Crop Library */}
-          <Route
-            path="/crop_library"
-            element={
-              <ProtectedRoute>
-                <CropManagement />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Admin dashboard */}
+          {/* ── Admin ── */}
           <Route
             path="/admin_dashboard"
             element={
@@ -117,7 +181,9 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* Catch-all */}
+          
+
+          {/* ── Catch-all ── */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
