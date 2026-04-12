@@ -1,233 +1,233 @@
-// src/jsx_files/farmerDashboard_page/crop_management.jsx
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../css_files/farmerDashboard_page/crop_management.css";
+import "../../css_files/farmerDashboard_page/crop_disease.css";
 
 const API = "http://localhost:5000/api";
 
-const typeIcon = {
-  grain:     "fa-wheat-awn",
-  vegetable: "fa-carrot",
-  fruit:     "fa-apple-whole",
-  cash:      "fa-money-bill-trend-up",
-  pulse:     "fa-circle-dot",
-};
-
-const seasonLabel = (s) => {
-  if (s === "yearround") return "Year Round";
-  return s.charAt(0).toUpperCase() + s.slice(1);
+const CROP_ICON = {
+  rice: "fa-wheat-awn",
+  wheat: "fa-seedling",
+  potato: "fa-circle",
+  maize: "fa-leaf",
+  jute: "fa-spa",
+  other: "fa-virus",
 };
 
 function SkeletonCard() {
   return (
-    <div className="cm-card cm-card-skeleton">
-      <div className="cm-skeleton-img" />
-      <div className="cm-skeleton-body">
-        <div className="cm-skeleton-line cm-sk-title" />
-        <div className="cm-skeleton-line cm-sk-sub" />
-        <div className="cm-skeleton-tags">
-          <div className="cm-skeleton-tag" />
-          <div className="cm-skeleton-tag" />
+    <div className="cd-card cd-card-skeleton">
+      <div className="cd-skeleton-img" />
+      <div className="cd-skeleton-body">
+        <div className="cd-skeleton-line cd-sk-title" />
+        <div className="cd-skeleton-line cd-sk-sub" />
+        <div className="cd-skeleton-tags">
+          <div className="cd-skeleton-tag" />
+          <div className="cd-skeleton-tag" />
         </div>
       </div>
     </div>
   );
 }
 
-export default function CropManagement() {
+export default function CropDisease() {
   const navigate = useNavigate();
-  const [crops, setCrops]               = useState([]);
-  const [loading, setLoading]           = useState(true);
-  const [error, setError]               = useState("");
-  const [search, setSearch]             = useState("");
+  const [diseases, setDiseases] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
 
   useEffect(() => {
-    const fetchCrops = async () => {
+    const fetchDiseases = async () => {
       try {
-        const res = await fetch(`${API}/admin/crops`);
+        const res = await fetch(`${API}/admin/diseases`);
         if (!res.ok) throw new Error("Server error");
         const data = await res.json();
-        setCrops(data.crops || []);
+        setDiseases(data.diseases || []);
       } catch {
-        setError("Backend connect করা যাচ্ছে না। Server চালু আছে কিনা দেখো।");
+        setError("Backend connect করা যাচ্ছে না।");
       } finally {
         setLoading(false);
       }
     };
-    fetchCrops();
+    fetchDiseases();
   }, []);
 
-  const filters = [
-    { id: "all",       label: "All" },
-    { id: "grain",     label: "🌾 Grain" },
-    { id: "vegetable", label: "🥦 Vegetable" },
-    { id: "fruit",     label: "🍎 Fruit" },
-    { id: "cash",      label: "💰 Cash Crop" },
-    { id: "pulse",     label: "🫘 Pulse" },
-  ];
+  const cropTypes = ["all", ...new Set(diseases.map((d) => d.crop))];
 
-  const filtered = crops.filter(
-    (c) =>
-      (activeFilter === "all" || c.type === activeFilter) &&
-      (c.name.toLowerCase().includes(search.toLowerCase()) ||
-        (c.type || "").includes(search.toLowerCase()) ||
-        (c.region || "").toLowerCase().includes(search.toLowerCase()) ||
-        (c.tags || []).some((t) =>
-          t.toLowerCase().includes(search.toLowerCase())
+  const filtered = diseases.filter(
+    (d) =>
+      (activeFilter === "all" || d.crop === activeFilter) &&
+      (d.name.toLowerCase().includes(search.toLowerCase()) ||
+        d.crop.toLowerCase().includes(search.toLowerCase()) ||
+        (d.symptoms || []).some((s) =>
+          s.toLowerCase().includes(search.toLowerCase()),
         )),
   );
 
   return (
-    <div className="cm-root">
-      {/* HERO */}
-      <div className="cm-hero">
-        <div className="cm-hero-bg" />
-        <div className="cm-hero-content">
-          <div className="cm-hero-badge">
-            <i className="fa-solid fa-seedling" /> KrishiBondhu — Crop Library
+    <div className="cd-root">
+      {/* ── HERO ── */}
+      <div className="cd-hero">
+        <div className="cd-hero-bg" />
+        <div className="cd-hero-content">
+          <div className="cd-hero-badge">
+            <i className="fa-solid fa-virus" /> KrishiBondhu — Disease Library
           </div>
-          <h1 className="cm-hero-title">
-            Crop <span>Explorer</span>
+          <h1 className="cd-hero-title">
+            Crop Disease <span>Explorer</span>
           </h1>
-          <p className="cm-hero-sub">
-            Discover crops by season, type, and region. Get full cultivation
-            guides, soil requirements, and market insights.
+          <p className="cd-hero-sub">
+            Search, filter and explore common crop diseases with severity
+            levels, symptoms, and expert guidance.
           </p>
-          <div className="cm-hero-stats">
-            <div className="cm-hero-stat">
-              <div className="cm-hero-stat-icon">
-                <i className="fa-solid fa-seedling" />
+          <div className="cd-hero-stats">
+            <div className="cd-hero-stat">
+              <div className="cd-hero-stat-icon">
+                <i className="fa-solid fa-virus" />
               </div>
-              <span>{loading ? "..." : `${crops.length} Crops Listed`}</span>
+              <span>
+                {loading ? "..." : `${diseases.length} Diseases Listed`}
+              </span>
             </div>
-            <div className="cm-hero-stat">
-              <div className="cm-hero-stat-icon">
-                <i className="fa-solid fa-sun" />
+            <div className="cd-hero-stat">
+              <div className="cd-hero-stat-icon">
+                <i className="fa-solid fa-wheat-awn" />
               </div>
-              <span>3 Seasons</span>
+              <span>
+                {loading
+                  ? "..."
+                  : `${new Set(diseases.map((d) => d.crop)).size} Crop Types`}
+              </span>
             </div>
-            <div className="cm-hero-stat">
-              <div className="cm-hero-stat-icon">
-                <i className="fa-solid fa-map-location-dot" />
+            <div className="cd-hero-stat">
+              <div className="cd-hero-stat-icon">
+                <i className="fa-solid fa-shield-halved" />
               </div>
-              <span>All Regions</span>
+              <span>Prevention Tips</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* MAIN */}
-      <div className="cm-main">
-
+      {/* ── MAIN ── */}
+      <div className="cd-main">
         {/* Error */}
         {error && (
-          <div className="cm-error-box">
-            <i className="fa-solid fa-triangle-exclamation" />
-            {error}
+          <div className="cd-error-box">
+            <i className="fa-solid fa-triangle-exclamation" /> {error}
           </div>
         )}
 
-        {/* Controls */}
         {!error && (
           <>
-            <div className="cm-controls">
-              <div className="cm-search-wrap">
+            {/* Controls */}
+            <div className="cd-controls">
+              <div className="cd-search-wrap">
                 <i className="fa-solid fa-magnifying-glass" />
                 <input
                   type="text"
-                  placeholder="Search crop name, region or tag..."
+                  placeholder="Search disease or crop name..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
                 {search && (
-                  <button className="cm-search-clear" onClick={() => setSearch("")}>
+                  <button
+                    className="cd-search-clear"
+                    onClick={() => setSearch("")}
+                  >
                     <i className="fa-solid fa-xmark" />
                   </button>
                 )}
               </div>
-              <div className="cm-filter-pills">
-                {filters.map((f) => (
+              <div className="cd-filter-pills">
+                {cropTypes.map((c) => (
                   <button
-                    key={f.id}
-                    className={`cm-pill ${activeFilter === f.id ? "active" : ""}`}
-                    onClick={() => setActiveFilter(f.id)}
+                    key={c}
+                    className={`cd-pill ${activeFilter === c ? "active" : ""}`}
+                    onClick={() => setActiveFilter(c)}
                   >
-                    {f.label}
+                    {c === "all"
+                      ? "All"
+                      : c.charAt(0).toUpperCase() + c.slice(1)}
                   </button>
                 ))}
               </div>
             </div>
 
-            <p className="cm-results-meta">
-              {loading
-                ? "Loading crops..."
-                : <> Showing <span>{filtered.length}</span> crops </>
-              }
+            <p className="cd-results-meta">
+              {loading ? (
+                "Loading diseases..."
+              ) : (
+                <>
+                  {" "}
+                  Showing <span>{filtered.length}</span> diseases{" "}
+                </>
+              )}
             </p>
           </>
         )}
 
         {/* Grid */}
-        <div className="cm-grid">
+        <div className="cd-grid">
           {loading ? (
             Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
           ) : error ? null : filtered.length === 0 ? (
-            <div className="cm-empty">
+            <div className="cd-empty">
               <span>🌱</span>
-              <h3>No crops found</h3>
-              <p>Admin এখনো কোনো crop add করেনি অথবা filter পরিবর্তন করো।</p>
+              <h3>No diseases found</h3>
+              <p>Try a different search term or filter.</p>
             </div>
           ) : (
-            filtered.map((crop, idx) => (
+            filtered.map((d, idx) => (
               <div
-                key={crop._id}
-                className="cm-card"
+                key={d._id}
+                className="cd-card"
                 style={{ animationDelay: `${idx * 0.06}s` }}
-                onClick={() => navigate(`/crop_detail/${crop._id}`)}
+                onClick={() => navigate(`/disease_detail/${d._id}`)}
               >
                 <img
-                  className="cm-card-img"
-                  src={crop.img || "https://via.placeholder.com/800x400?text=No+Image"}
-                  alt={crop.name}
+                  className="cd-card-img"
+                  src={
+                    d.img || "https://via.placeholder.com/800x400?text=No+Image"
+                  }
+                  alt={d.name}
                   loading="lazy"
-                  onError={(e) => { e.target.src = "https://via.placeholder.com/800x400?text=No+Image"; }}
+                  onError={(e) => {
+                    e.target.src =
+                      "https://via.placeholder.com/800x400?text=No+Image";
+                  }}
                 />
-                <div className="cm-card-grad" />
+                <div className="cd-card-grad" />
 
-                <span className="cm-type-tag">
-                  <i className={`fa-solid ${typeIcon[crop.type] || "fa-seedling"}`} />
-                  {crop.type}
+                {/* Crop tag */}
+                <span className="cd-crop-tag">
+                  <i
+                    className={`fa-solid ${CROP_ICON[d.crop] || "fa-seedling"}`}
+                  />
+                  {d.crop}
                 </span>
 
-                <span className={`cm-season-badge ${crop.season}`}>
-                  {seasonLabel(crop.season)}
+                {/* Severity badge */}
+                <span className={`cd-sev-badge cd-sev-${d.severity}`}>
+                  ● {d.severity}
                 </span>
 
-                <div className="cm-card-body">
-                  <div className="cm-card-title">{crop.name}</div>
-                  {crop.region && (
-                    <div className="cm-card-region">
-                      <i className="fa-solid fa-location-dot" /> {crop.region}
-                    </div>
-                  )}
-                  {crop.period && (
-                    <div className="cm-card-region">
-                      <i className="fa-regular fa-clock" /> {crop.period}
-                    </div>
-                  )}
-                  {crop.desc && <div className="cm-card-desc">{crop.desc}</div>}
-                  {crop.tags && crop.tags.length > 0 && (
-                    <div className="cm-card-tags">
-                      {crop.tags.slice(0, 3).map((t) => (
-                        <span key={t} className="cm-card-tag">{t}</span>
+                <div className="cd-card-body">
+                  <div className="cd-card-title">{d.name}</div>
+                  {d.desc && <div className="cd-card-desc">{d.desc}</div>}
+                  {d.symptoms && d.symptoms.length > 0 && (
+                    <div className="cd-symptoms">
+                      {d.symptoms.slice(0, 3).map((s) => (
+                        <span key={s} className="cd-sym-tag">
+                          {s}
+                        </span>
                       ))}
                     </div>
                   )}
                 </div>
 
-                <div className="cm-card-arrow">
+                <div className="cd-card-arrow">
                   <i className="fa-solid fa-arrow-right" />
                 </div>
               </div>
