@@ -1,7 +1,5 @@
 # KrishiBondhu
 
-> **কৃষিবন্ধু** — *Farmer's Friend*
-
 KrishiBondhu is a full-stack **MERN** web platform that bridges the gap between farmers, agricultural experts, and bulk buyers — providing real-time weather intelligence, AI-powered crop advisory, disease detection support, and a direct farmer–buyer marketplace, designed to promote sustainable farming and social impact in Bangladesh.
 
 ---
