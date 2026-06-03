@@ -20,7 +20,7 @@ By combining these features, KrishiBondhu provides a **seamless, data-driven, an
 
 ## Screenshots
 
-### 🏠 Landing Page
+### Landing Page
 
 <div align="center">
   <img src="screenshots/home1.png" width="800" alt="Landing Page Hero">
@@ -39,7 +39,7 @@ By combining these features, KrishiBondhu provides a **seamless, data-driven, an
 
 ---
 
-### 🔐 Authentication
+### Authentication
 
 <div align="center">
   <img src="screenshots/buyerlogin1.png" width="800" alt="Login Page">
@@ -48,7 +48,7 @@ By combining these features, KrishiBondhu provides a **seamless, data-driven, an
 
 ---
 
-### 🌾 Farmer Portal — Dashboard
+### Farmer Portal — Dashboard
 
 <div align="center">
   <img src="screenshots/fdashboard1.png" width="800" alt="Farmer Dashboard Hero">
@@ -72,7 +72,7 @@ By combining these features, KrishiBondhu provides a **seamless, data-driven, an
 
 ---
 
-### 🌱 Farmer Portal — Crop Library
+### Farmer Portal — Crop Library
 
 <div align="center">
   <img src="screenshots/cropdetails1.png" width="800" alt="Crop Detail Hero">
@@ -91,7 +91,7 @@ By combining these features, KrishiBondhu provides a **seamless, data-driven, an
 
 ---
 
-### 🦠 Farmer Portal — Disease Library
+### Farmer Portal — Disease Library
 
 <div align="center">
   <img src="screenshots/disease1.png" width="800" alt="Disease Hero">
@@ -110,7 +110,7 @@ By combining these features, KrishiBondhu provides a **seamless, data-driven, an
 
 ---
 
-### 🏢 Buyer Portal — Dashboard
+### Buyer Portal — Dashboard
 
 <div align="center">
   <img src="screenshots/bdashboard1.png" width="800" alt="Buyer Dashboard Hero">
@@ -124,7 +124,7 @@ By combining these features, KrishiBondhu provides a **seamless, data-driven, an
 
 ---
 
-### 🛒 Buyer Portal — Marketplace
+### Buyer Portal — Marketplace
 
 <div align="center">
   <img src="screenshots/bmarketplace1.png" width="800" alt="Marketplace Hero">
@@ -138,7 +138,7 @@ By combining these features, KrishiBondhu provides a **seamless, data-driven, an
 
 ---
 
-### 👨‍🔬 Farmer Portal — Expert Consultation
+### Farmer Portal — Expert Consultation
 
 <div align="center">
   <img src="screenshots/consultation1.png" width="800" alt="Expert Consultation Hero">
@@ -152,7 +152,7 @@ By combining these features, KrishiBondhu provides a **seamless, data-driven, an
 
 ---
 
-### ⚙️ Admin Panel
+### Admin Panel
 
 <div align="center">
   <img src="screenshots/admindashboard.png" width="800" alt="Admin Dashboard">
