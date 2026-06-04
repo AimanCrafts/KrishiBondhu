@@ -1,0 +1,158 @@
+/* HEADER */
+
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 6%;
+  box-sizing: border-box;
+  z-index: 1000;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Theme styles using CSS variables */
+:root[data-theme="light"] {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --green: #4caf50;
+
+  --bg: #ffffff;
+  --text: #000000;
+
+  --glass: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="dark"] {
+  --bg-color: #1c1c1c;
+  --text-color: #ffffff;
+  --green: #4caf50;
+
+  --bg: #1e1e1e;
+  --text: #ffffff;
+  --text-secondary: #f0f0f0;
+
+  --glass: rgba(18, 18, 18, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+
+  
+}
+
+/* Apply variables to body */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+header.scrolled {
+  height: 65px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+/* Logo */
+.logo {
+  font-family: "Space Grotesk";
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 6px; /* controlled spacing */
+}
+
+.krishi-text {
+  color: var(--green);
+}
+
+.logo i {
+  color: var(--green);
+}
+
+/* Navigation Controls */
+
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Select Dropdown */
+/*
+select {
+  appearance: none;
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s all;
+}
+
+select:hover {
+  background: #2e7d32;
+  transform: scale(1.05);
+}
+*/
+
+/* Buttons */
+
+.theme-btn {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s all;
+  background: #4caf50;
+  color: #fff;
+}
+
+.theme-btn:hover {
+  background: #2e7d32;
+  transform: scale(1.05);
+}
+
+.header-btn {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s all;
+}
+
+.theme-btn:focus,
+.theme-btn:focus-visible,
+.header-btn:focus,
+.header-btn:focus-visible {
+  outline: none;
+}
+
+.header-btn.login {
+  background: #4caf50;
+  color: #fff;
+}
+
+.header-btn.login:hover {
+  background: #2e7d32;
+  transform: scale(1.05);
+}
+
+.header-btn.signup {
+  background: #4caf50;
+  color: #fff;
+}
+
+.header-btn.signup:hover {
+  background: #2e7d32;
+  transform: scale(1.05);
+}

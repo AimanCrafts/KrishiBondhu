@@ -1,0 +1,225 @@
+/* ── Onboarding page root ─────────────────────────────── */
+.ob-root {
+  min-height: 100vh;
+  background: #f4f7f4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 16px 60px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ── Brand header ─────────────────────────────────────── */
+.ob-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.ob-brand {
+  font-size: 1.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+.ob-brand i {
+  color: #2e7d32;
+}
+.ob-brand .k {
+  color: #2e7d32;
+}
+.ob-brand .b {
+  color: #558b2f;
+}
+.ob-tagline {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+/* ── Step indicator ───────────────────────────────────── */
+.ob-steps {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 28px;
+}
+.ob-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #999;
+  font-weight: 500;
+}
+.ob-step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ddd;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition:
+    background 0.3s,
+    color 0.3s;
+}
+.ob-step.active .ob-step-circle {
+  background: #2e7d32;
+  color: #fff;
+}
+.ob-step.active {
+  color: #2e7d32;
+}
+.ob-step.done .ob-step-circle {
+  background: #81c784;
+  color: #fff;
+}
+.ob-step.done {
+  color: #81c784;
+}
+
+/* ── Main card ────────────────────────────────────────── */
+.ob-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  padding: 36px 40px;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ob-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1b5e20;
+  margin: 0;
+}
+.ob-desc {
+  font-size: 0.88rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Form elements ────────────────────────────────────── */
+.ob-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: -8px; /* tightens gap between label and input */
+}
+.ob-input,
+.ob-select {
+  width: 100%;
+  padding: 10px 13px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  color: #222;
+  background: #fafafa;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.ob-input:focus,
+.ob-select:focus {
+  outline: none;
+  border-color: #2e7d32;
+  background: #fff;
+}
+
+.ob-note {
+  font-size: 0.82rem;
+  color: #888;
+  background: #f1f8e9;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 0;
+}
+.ob-note i {
+  color: #558b2f;
+  margin-right: 5px;
+}
+
+/* ── Error ────────────────────────────────────────────── */
+.ob-error {
+  font-size: 0.85rem;
+  color: #c62828;
+  background: #ffebee;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 0;
+}
+.ob-error i {
+  margin-right: 6px;
+}
+
+/* ── Buttons ──────────────────────────────────────────── */
+.ob-btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+.ob-btn-back {
+  flex: 1;
+  padding: 11px;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+  color: #555;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.92rem;
+}
+.ob-btn-next,
+.ob-btn-submit {
+  flex: 2;
+  padding: 11px;
+  border: none;
+  border-radius: 8px;
+  background: #2e7d32;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+.ob-btn-next:hover,
+.ob-btn-submit:hover {
+  background: #1b5e20;
+}
+.ob-btn-submit:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+.ob-skip {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-align: center;
+  padding: 0;
+  margin-top: -4px;
+}
+.ob-skip:hover {
+  color: #555;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 520px) {
+  .ob-card {
+    padding: 24px 20px;
+  }
+  .ob-steps {
+    gap: 16px;
+  }
+}

@@ -1,0 +1,343 @@
+/* src/css_files/farmerDashboard_page/crop_detail.css */
+/* সব class এ .crop- prefix আছে */
+
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap");
+
+/* ── Root ─────────────────────────────────────────────────── */
+.crop-root {
+  font-family: "Inter", sans-serif;
+  background: #f5faf5;
+  min-height: 100vh;
+  color: #111;
+}
+
+/* ── Loading ──────────────────────────────────────────────── */
+.crop-loading {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #6b7280;
+  font-size: 15px;
+}
+.crop-loading-spinner {
+  width: 56px;
+  height: 56px;
+  background: #dcfce7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #16a34a;
+}
+
+/* ── Error ────────────────────────────────────────────────── */
+.crop-error {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  padding: 40px 20px;
+}
+.crop-error i {
+  font-size: 48px;
+  color: #f59e0b;
+}
+.crop-error h3 {
+  font-size: 18px;
+  color: #374151;
+}
+
+/* ── Hero ─────────────────────────────────────────────────── */
+.crop-hero {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  overflow: hidden;
+  background: #1b4332;
+}
+
+.crop-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.crop-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.35) 50%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+}
+
+/* Back button on hero */
+.crop-back-btn-hero {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s;
+  font-family: "Inter", sans-serif;
+  z-index: 2;
+}
+.crop-back-btn-hero:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* Hero content */
+.crop-hero-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 28px 40px;
+  z-index: 2;
+}
+
+.crop-hero-badges {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.crop-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 5px 14px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  backdrop-filter: blur(6px);
+}
+
+.crop-season-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(6px);
+}
+.crop-season-kharif {
+  background: rgba(22, 163, 74, 0.82);
+  color: #fff;
+}
+.crop-season-rabi {
+  background: rgba(59, 130, 246, 0.82);
+  color: #fff;
+}
+.crop-season-yearround {
+  background: rgba(139, 92, 246, 0.82);
+  color: #fff;
+}
+
+.crop-hero-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 700;
+  color: white;
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+
+.crop-hero-region {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.crop-hero-region i {
+  color: #86efac;
+}
+
+/* ── Body ─────────────────────────────────────────────────── */
+.crop-body {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 36px 24px 80px;
+}
+
+/* ── Info Cards Row ───────────────────────────────────────── */
+.crop-info-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.crop-info-card {
+  background: white;
+  border: 1.5px solid #d1fae5;
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 12px rgba(22, 163, 74, 0.08);
+}
+
+.crop-info-icon {
+  width: 42px;
+  height: 42px;
+  background: #dcfce7;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  color: #16a34a;
+  flex-shrink: 0;
+}
+
+.crop-info-label {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 4px;
+}
+
+.crop-info-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* ── Sections ─────────────────────────────────────────────── */
+.crop-section {
+  background: white;
+  border: 1.5px solid #d1fae5;
+  border-radius: 14px;
+  padding: 22px 24px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 12px rgba(22, 163, 74, 0.06);
+}
+
+.crop-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #16a34a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.crop-desc {
+  font-size: 15px;
+  color: #374151;
+  line-height: 1.75;
+}
+
+/* ── Tags ─────────────────────────────────────────────────── */
+.crop-tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.crop-tag {
+  padding: 6px 16px;
+  background: #f0fdf4;
+  border: 1.5px solid #bbf7d0;
+  color: #16a34a;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ── Footer Actions ───────────────────────────────────────── */
+.crop-footer-actions {
+  margin-top: 32px;
+  display: flex;
+  gap: 12px;
+}
+
+.crop-btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: white;
+  border: 1.5px solid #d1fae5;
+  border-radius: 10px;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: "Inter", sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.crop-btn-back:hover {
+  background: #f0fdf4;
+  border-color: #16a34a;
+  color: #16a34a;
+}
+
+/* ── Back button (error state) ────────────────────────────── */
+.crop-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: "Inter", sans-serif;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .crop-hero {
+    height: 300px;
+  }
+  .crop-hero-content {
+    padding: 20px 18px;
+  }
+  .crop-body {
+    padding: 24px 16px 60px;
+  }
+  .crop-info-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}

@@ -1,0 +1,530 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap");
+
+.ce-root {
+  font-family: "Inter", sans-serif;
+  background: #f5faf5;
+  color: #111;
+  min-height: 100vh;
+}
+
+.ce-btn,
+.ce-btn:visited,
+.ce-btn:hover,
+.ce-btn:active {
+  color: #fff !important;
+  text-decoration: none;
+}
+
+/* ── TOPBAR ─────────────────────────────────────────────────── */
+.ce-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+  height: 60px;
+  background: #fff;
+  border-bottom: 1px solid #e8f5e9;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+}
+.ce-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2d6a4f;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+.ce-back-btn:hover {
+  background: #e8f5e9;
+}
+.ce-topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 24px; /* same as main header */
+  color: var(--text-color);
+}
+.ce-topbar-brand i {
+  font-size: 20px;
+  color: #4caf50;
+}
+.ce-logo-text {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ce-krishi {
+  color: #4caf50;
+}
+.ce-brand-krishi {
+  color: #4caf50;
+}
+
+/* ── HERO ─────────────────────────────────────────────────── */
+.ce-hero {
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+  background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 55%, #40916c 100%);
+  display: flex;
+  align-items: center;
+  padding: 60px 8%;
+  overflow: hidden;
+}
+.ce-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse at 80% 50%,
+      rgba(76, 175, 80, 0.22) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at 10% 80%,
+      rgba(27, 67, 50, 0.4) 0%,
+      transparent 55%
+    );
+  pointer-events: none;
+}
+.ce-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+}
+.ce-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50px;
+  padding: 7px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #a7f3d0;
+  margin-bottom: 18px;
+  backdrop-filter: blur(8px);
+}
+.ce-hero-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(26px, 4.5vw, 46px);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+.ce-hero-title span {
+  color: #86efac;
+}
+.ce-hero-sub {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.7;
+  max-width: 480px;
+}
+.ce-hero-stats {
+  display: flex;
+  gap: 28px;
+  margin-top: 28px;
+}
+.ce-hstat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.ce-hstat i {
+  font-size: 18px;
+  color: #86efac;
+  margin-bottom: 4px;
+}
+.ce-hstat strong {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+.ce-hstat span {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 500;
+}
+
+/* ── CONTROLS ─────────────────────────────────────────────── */
+.ce-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  padding: 22px 8%;
+  background: #fff;
+  border-bottom: 1px solid #e8f5e9;
+}
+.ce-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+}
+.ce-search-wrap > i {
+  position: absolute;
+  left: 14px;
+  color: #74b49b;
+  font-size: 14px;
+}
+.ce-search-wrap input {
+  width: 100%;
+  padding: 10px 36px 10px 40px;
+  border: 1.5px solid #c8e6c9;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #f5faf5;
+  color: #111;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.ce-search-wrap input:focus {
+  border-color: #40916c;
+}
+.ce-search-clear {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #aaa;
+  font-size: 13px;
+  padding: 4px;
+}
+.ce-filter-tabs {
+  display: flex;
+  gap: 8px;
+}
+.ce-filter-tab {
+  padding: 8px 18px;
+  border-radius: 50px;
+  border: 1.5px solid #c8e6c9;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  color: #2d6a4f;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ce-filter-tab:hover {
+  background: #e8f5e9;
+}
+.ce-filter-tab.active {
+  background: #2d6a4f;
+  border-color: #2d6a4f;
+  color: #fff;
+}
+
+/* ── MAIN ─────────────────────────────────────────────────── */
+.ce-main {
+  padding: 32px 8% 60px;
+}
+.ce-result-count {
+  font-size: 13px;
+  color: #74b49b;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+/* ── GRID ──────────────────────────────────────────────────── */
+.ce-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 22px;
+}
+
+/* ── EXPERT CARD ───────────────────────────────────────────── */
+.ce-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e8f5e9;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+.ce-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 24px rgba(45, 106, 79, 0.12);
+}
+.ce-card-unavailable {
+  opacity: 0.7;
+}
+
+.ce-card-header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.ce-avatar {
+  position: relative;
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2d6a4f, #40916c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+.ce-avatar-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.ce-avatar-initials {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+.ce-avail-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+.ce-avail-dot.available {
+  background: #22c55e;
+}
+.ce-avail-dot.unavailable {
+  background: #ef4444;
+}
+
+.ce-card-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ce-name {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #1b4332;
+}
+.ce-specialty,
+.ce-institution,
+.ce-experience {
+  font-size: 12px;
+  color: #52855e;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.ce-specialty {
+  font-weight: 600;
+  color: #2d6a4f;
+  font-size: 13px;
+}
+
+.ce-bio {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.65;
+  margin: 0;
+  padding: 12px;
+  background: #f5faf5;
+  border-radius: 8px;
+  border-left: 3px solid #40916c;
+}
+
+.ce-availability-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 50px;
+  width: fit-content;
+}
+.ce-card:not(.ce-card-unavailable) .ce-availability-badge {
+  background: #dcfce7;
+  color: #166534;
+}
+.ce-card-unavailable .ce-availability-badge {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.ce-card-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.ce-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+.ce-btn-call {
+  background: #2d6a4f;
+  color: #fff;
+}
+.ce-btn-call:hover {
+  background: #1b4332;
+}
+.ce-btn-email {
+  background: #40916c;
+  color: #fff;
+}
+.ce-btn-email:hover {
+  background: #2d6a4f;
+}
+.ce-no-contact {
+  font-size: 12px;
+  color: #aaa;
+  font-style: italic;
+  align-self: center;
+}
+
+/* ── SKELETON ──────────────────────────────────────────────── */
+.ce-card-skeleton {
+  pointer-events: none;
+}
+.ce-skeleton-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #e8f5e9 25%, #d0ead5 50%, #e8f5e9 75%);
+  background-size: 200% 100%;
+  animation: ce-shimmer 1.4s infinite;
+  flex-shrink: 0;
+}
+.ce-skeleton-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ce-skeleton-line {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e8f5e9 25%, #d0ead5 50%, #e8f5e9 75%);
+  background-size: 200% 100%;
+  animation: ce-shimmer 1.4s infinite;
+  height: 14px;
+}
+.ce-sk-name {
+  width: 55%;
+  height: 18px;
+}
+.ce-sk-spec {
+  width: 40%;
+}
+.ce-sk-inst {
+  width: 65%;
+}
+.ce-sk-bio {
+  width: 90%;
+  height: 40px;
+  margin-top: 6px;
+}
+
+@keyframes ce-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ── EMPTY / ERROR STATES ──────────────────────────────────── */
+.ce-empty-state,
+.ce-error-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: #74b49b;
+}
+.ce-empty-state i,
+.ce-error-state i {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+.ce-empty-state p,
+.ce-error-state p {
+  font-size: 15px;
+  color: #888;
+}
+.ce-retry-btn {
+  margin-top: 16px;
+  padding: 10px 24px;
+  background: #2d6a4f;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.ce-retry-btn:hover {
+  background: #1b4332;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .ce-hero {
+    padding: 40px 5%;
+    min-height: 220px;
+  }
+  .ce-controls {
+    padding: 16px 5%;
+  }
+  .ce-main {
+    padding: 20px 5% 40px;
+  }
+  .ce-grid {
+    grid-template-columns: 1fr;
+  }
+  .ce-hero-stats {
+    gap: 18px;
+  }
+  .ce-filter-tabs {
+    flex-wrap: wrap;
+  }
+}
