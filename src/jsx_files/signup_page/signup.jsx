@@ -502,7 +502,7 @@ function FarmLandscape() {
 }
 
 /* ══════════════════════════════════
-   HERO TEXT — always right, never moves
+   HERO TEXT
 ══════════════════════════════════ */
 function HeroText({ setAccountType }) {
   return (
@@ -564,22 +564,9 @@ export default function Signup() {
 
   return (
     <div className="signup-bg">
-      {/* ── Top Nav ── */}
-
-      {/*
-        ══════════════════════════════════════════════════════
-        TWO-COLUMN LAYOUT
-        .signup-layout      → display:grid, two columns
-        .signup-card-col    → left, normal flow (card lives here)
-        .signup-hero-col    → right, position:sticky so it never
-                              moves while the left column grows
-        ══════════════════════════════════════════════════════
-      */}
       <div className="signup-layout">
-        {/* LEFT ─ card only */}
         <div className="signup-card-col">
           <div className="signup-card">
-            {/* Step indicator */}
             <div className="step-indicator">
               <div className={`step-dot ${step1Done ? "done" : "active"}`}>
                 {step1Done ? (

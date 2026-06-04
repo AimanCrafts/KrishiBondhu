@@ -1,9 +1,137 @@
-// src/jsx_files/buyer_page/orders.jsx
 import { useState, useEffect, useRef } from "react";
-
+import BuyerLayout from "../../components/BuyerLayout";
 import "../../css_files/buyer_page/orders.css";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const ALL_ORDERS = [
+  {
+    id: "ORD-4821",
+    crop: "Rice (Boro)",
+    qty: "5,000 kg",
+    qtyKg: 5000,
+    pricePerKg: 48,
+    total: "৳2,40,000",
+    totalNum: 240000,
+    farmer: "Rahim Uddin",
+    farmerLoc: "Gazipur",
+    status: "delivered",
+    date: "Jun 12, 2025",
+    deliveryDate: "Jun 18, 2025",
+    paymentStatus: "paid",
+    note: "",
+  },
+  {
+    id: "ORD-4820",
+    crop: "Red Lentil",
+    qty: "2,200 kg",
+    qtyKg: 2200,
+    pricePerKg: 110,
+    total: "৳2,42,000",
+    totalNum: 242000,
+    farmer: "Karim Sheikh",
+    farmerLoc: "Comilla",
+    status: "in_transit",
+    date: "Jun 14, 2025",
+    deliveryDate: "Jun 20, 2025",
+    paymentStatus: "paid",
+    note: "Handle with care",
+  },
+  {
+    id: "ORD-4819",
+    crop: "Potato",
+    qty: "8,000 kg",
+    qtyKg: 8000,
+    pricePerKg: 32,
+    total: "৳2,56,000",
+    totalNum: 256000,
+    farmer: "Fatema Begum",
+    farmerLoc: "Munshiganj",
+    status: "confirmed",
+    date: "Jun 15, 2025",
+    deliveryDate: "Jun 22, 2025",
+    paymentStatus: "pending",
+    note: "",
+  },
+  {
+    id: "ORD-4818",
+    crop: "Mustard",
+    qty: "1,500 kg",
+    qtyKg: 1500,
+    pricePerKg: 92,
+    total: "৳1,38,000",
+    totalNum: 138000,
+    farmer: "Jalal Ahmed",
+    farmerLoc: "Jamalpur",
+    status: "pending",
+    date: "Jun 16, 2025",
+    deliveryDate: "—",
+    paymentStatus: "pending",
+    note: "Need Grade A quality",
+  },
+  {
+    id: "ORD-4817",
+    crop: "Wheat",
+    qty: "10,000 kg",
+    qtyKg: 10000,
+    pricePerKg: 38,
+    total: "৳3,80,000",
+    totalNum: 380000,
+    farmer: "Nurul Islam",
+    farmerLoc: "Rangpur",
+    status: "delivered",
+    date: "Jun 03, 2025",
+    deliveryDate: "Jun 09, 2025",
+    paymentStatus: "paid",
+    note: "",
+  },
+  {
+    id: "ORD-4816",
+    crop: "Mango",
+    qty: "2,500 kg",
+    qtyKg: 2500,
+    pricePerKg: 65,
+    total: "৳1,62,500",
+    totalNum: 162500,
+    farmer: "Selim Hossain",
+    farmerLoc: "Rajshahi",
+    status: "delivered",
+    date: "May 28, 2025",
+    deliveryDate: "Jun 04, 2025",
+    paymentStatus: "paid",
+    note: "",
+  },
+  {
+    id: "ORD-4815",
+    crop: "Onion",
+    qty: "4,000 kg",
+    qtyKg: 4000,
+    pricePerKg: 80,
+    total: "৳3,20,000",
+    totalNum: 320000,
+    farmer: "Sohag Mia",
+    farmerLoc: "Faridpur",
+    status: "cancelled",
+    date: "May 20, 2025",
+    deliveryDate: "—",
+    paymentStatus: "refunded",
+    note: "Cancelled — quality issue",
+  },
+  {
+    id: "ORD-4814",
+    crop: "Tomato",
+    qty: "3,000 kg",
+    qtyKg: 3000,
+    pricePerKg: 55,
+    total: "৳1,65,000",
+    totalNum: 165000,
+    farmer: "Amina Khatun",
+    farmerLoc: "Jessore",
+    status: "delivered",
+    date: "May 15, 2025",
+    deliveryDate: "May 21, 2025",
+    paymentStatus: "paid",
+    note: "",
+  },
+];
 
 const STATUS_META = {
   delivered: {
@@ -37,29 +165,9 @@ const STATUS_TABS = [
 ];
 
 /* ── ORDER DETAIL PANEL ── */
-function OrderDetailPanel({ order, onClose, onCancel }) {
-  const { label, cls, icon } = STATUS_META[order.status] || {
-    label: order.status,
-    cls: "",
-    icon: "fa-circle",
-  };
-  const { label: payLabel, cls: payCls } = PAY_META[order.paymentStatus] || {
-    label: order.paymentStatus,
-    cls: "",
-  };
-
-  const orderDate = new Date(order.createdAt).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-  const deliveryDate = order.deliveryDate
-    ? new Date(order.deliveryDate).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })
-    : "—";
+function OrderDetailPanel({ order, onClose }) {
+  const { label, cls, icon } = STATUS_META[order.status];
+  const { label: payLabel, cls: payCls } = PAY_META[order.paymentStatus];
 
   const TIMELINE = {
     pending: ["Order Placed", "Awaiting Farmer Confirmation", null, null],
@@ -69,14 +177,15 @@ function OrderDetailPanel({ order, onClose, onCancel }) {
     cancelled: ["Order Placed", "Cancelled", null, null],
   };
 
-  const steps = (TIMELINE[order.status] || []).filter(Boolean);
+  const steps = TIMELINE[order.status] || [];
+  const doneCount = steps.filter(Boolean).length;
 
   return (
     <div className="bo-panel-overlay" onClick={onClose}>
       <div className="bo-panel" onClick={(e) => e.stopPropagation()}>
         <div className="bo-panel-header">
           <div>
-            <div className="bo-panel-order-id">{order.orderNumber}</div>
+            <div className="bo-panel-order-id">{order.id}</div>
             <div className="bo-panel-crop">{order.crop}</div>
           </div>
           <button className="bo-panel-close" onClick={onClose}>
@@ -86,34 +195,33 @@ function OrderDetailPanel({ order, onClose, onCancel }) {
 
         {/* STATUS TIMELINE */}
         <div className="bo-timeline">
-          {steps.map((step, i) => (
-            <div key={step} className="bo-tl-step done">
+          {steps.filter(Boolean).map((step, i) => (
+            <div
+              key={step}
+              className={`bo-tl-step ${i < doneCount ? "done" : ""}`}
+            >
               <div className="bo-tl-dot">
                 <i className="fa-solid fa-check" />
               </div>
               <div className="bo-tl-label">{step}</div>
-              {i < steps.length - 1 && <div className="bo-tl-line" />}
+              {i < steps.filter(Boolean).length - 1 && (
+                <div className="bo-tl-line" />
+              )}
             </div>
           ))}
         </div>
 
         <div className="bo-panel-body">
+          {/* Info grid */}
           <div className="bo-info-grid">
             {[
-              { label: "Farmer", value: order.farmerName || "—" },
-              { label: "Location", value: order.farmerLocation || "—" },
-              { label: "Order Date", value: orderDate },
-              { label: "Delivery", value: deliveryDate },
-              {
-                label: "Quantity",
-                value: `${order.qtyKg?.toLocaleString()} kg`,
-              },
+              { label: "Farmer", value: order.farmer },
+              { label: "Location", value: order.farmerLoc },
+              { label: "Order Date", value: order.date },
+              { label: "Delivery", value: order.deliveryDate },
+              { label: "Quantity", value: order.qty },
               { label: "Price / kg", value: `৳${order.pricePerKg}` },
-              {
-                label: "Total Amount",
-                value: `৳${order.totalAmount?.toLocaleString()}`,
-                strong: true,
-              },
+              { label: "Total Amount", value: order.total, strong: true },
               { label: "Payment", value: payLabel, payClass: payCls },
             ].map((row) => (
               <div key={row.label} className="bo-info-row">
@@ -144,20 +252,20 @@ function OrderDetailPanel({ order, onClose, onCancel }) {
           {order.status === "pending" && (
             <button
               className="bo-panel-action bo-action-cancel"
-              onClick={() => onCancel(order._id)}
+              onClick={() => alert("Cancel order: Connect to backend")}
             >
               <i className="fa-solid fa-ban" /> Cancel Order
             </button>
           )}
           <button
             className="bo-panel-action bo-action-invoice"
-            onClick={() => alert("Invoice download coming soon")}
+            onClick={() => alert("Download invoice: Connect to backend")}
           >
             <i className="fa-solid fa-file-invoice" /> Invoice
           </button>
           <button
             className="bo-panel-action bo-action-reorder"
-            onClick={() => alert("Reorder coming soon")}
+            onClick={() => alert("Reorder: Connect to backend")}
           >
             <i className="fa-solid fa-rotate-right" /> Reorder
           </button>
@@ -172,56 +280,7 @@ export default function Orders() {
   const [activeTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [allOrders, setAllOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const revealRefs = useRef([]);
-
-  /* ── Fetch orders from API ── */
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const token = localStorage.getItem("kb_token");
-        const res = await fetch(`${API_BASE}/api/buyer/orders`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to fetch orders");
-        const data = await res.json();
-        setAllOrders(data.orders || []);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOrders();
-  }, []);
-
-  /* ── Cancel order ── */
-  const handleCancel = async (orderId) => {
-    if (!window.confirm("Are you sure you want to cancel this order?")) return;
-    try {
-      const token = localStorage.getItem("kb_token");
-      const res = await fetch(
-        `${API_BASE}/api/buyer/orders/${orderId}/cancel`,
-        {
-          method: "PATCH",
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      if (!res.ok) throw new Error("Cancel failed");
-      setAllOrders((prev) =>
-        prev.map((o) =>
-          o._id === orderId ? { ...o, status: "cancelled" } : o,
-        ),
-      );
-      setSelectedOrder((prev) =>
-        prev && prev._id === orderId ? { ...prev, status: "cancelled" } : prev,
-      );
-    } catch (err) {
-      alert("Could not cancel order: " + err.message);
-    }
-  };
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -236,38 +295,38 @@ export default function Orders() {
     );
     revealRefs.current.forEach((el) => el && obs.observe(el));
     return () => obs.disconnect();
-  }, [loading]);
+  }, []);
 
   const addRef = (el) => {
     if (el && !revealRefs.current.includes(el)) revealRefs.current.push(el);
   };
 
-  const filtered = allOrders.filter((o) => {
+  const filtered = ALL_ORDERS.filter((o) => {
     const matchTab = activeTab === "all" || o.status === activeTab;
     const matchSearch =
-      (o.orderNumber || "").toLowerCase().includes(search.toLowerCase()) ||
-      (o.crop || "").toLowerCase().includes(search.toLowerCase()) ||
-      (o.farmerName || "").toLowerCase().includes(search.toLowerCase());
+      o.id.toLowerCase().includes(search.toLowerCase()) ||
+      o.crop.toLowerCase().includes(search.toLowerCase()) ||
+      o.farmer.toLowerCase().includes(search.toLowerCase());
     return matchTab && matchSearch;
   });
 
   /* KPI calculations */
-  const totalSpend = allOrders.reduce(
-    (s, o) => s + (o.status !== "cancelled" ? o.totalAmount || 0 : 0),
+  const totalSpend = ALL_ORDERS.reduce(
+    (s, o) => s + (o.status !== "cancelled" ? o.totalNum : 0),
     0,
   );
   const counts = {
-    pending: allOrders.filter((o) => o.status === "pending").length,
-    in_transit: allOrders.filter((o) => o.status === "in_transit").length,
-    delivered: allOrders.filter((o) => o.status === "delivered").length,
-    cancelled: allOrders.filter((o) => o.status === "cancelled").length,
+    pending: ALL_ORDERS.filter((o) => o.status === "pending").length,
+    in_transit: ALL_ORDERS.filter((o) => o.status === "in_transit").length,
+    delivered: ALL_ORDERS.filter((o) => o.status === "delivered").length,
+    cancelled: ALL_ORDERS.filter((o) => o.status === "cancelled").length,
   };
 
   const exportCSV = () => {
     const cols = [
       "Order ID",
       "Crop",
-      "Quantity (kg)",
+      "Quantity",
       "Price/kg",
       "Total",
       "Farmer",
@@ -276,19 +335,15 @@ export default function Orders() {
       "Payment",
     ];
     const rows = filtered.map((o) => [
-      o.orderNumber,
+      o.id,
       o.crop,
-      o.qtyKg,
+      o.qty,
       `৳${o.pricePerKg}`,
-      `৳${o.totalAmount}`,
-      o.farmerName || "—",
-      new Date(o.createdAt).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }),
-      STATUS_META[o.status]?.label || o.status,
-      PAY_META[o.paymentStatus]?.label || o.paymentStatus,
+      o.total,
+      o.farmer,
+      o.date,
+      STATUS_META[o.status].label,
+      PAY_META[o.paymentStatus].label,
     ]);
     const csv = [cols, ...rows].map((r) => r.join(",")).join("\n");
     const a = document.createElement("a");
@@ -297,66 +352,8 @@ export default function Orders() {
     a.click();
   };
 
-  /* ── Loading / Error states ── */
-  if (loading)
-    return (
-      <>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-        />
-        <nav className="fd-topbar">
-          <a className="fd-brand" href="/buyer_dashboard">
-            <i className="fa-solid fa-leaf" />
-            <span className="fd-brand-krishi">Krishi</span>Bondhu
-          </a>
-        </nav>
-        <div className="bo-page">
-          <div className="bo-empty">
-            <span>
-              <i className="fa-solid fa-spinner fa-spin" />
-            </span>
-            <h3>Loading orders…</h3>
-          </div>
-        </div>
-      </>
-    );
-
-  if (error)
-    return (
-      <>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-        />
-        <nav className="fd-topbar">
-          <a className="fd-brand" href="/buyer_dashboard">
-            <i className="fa-solid fa-leaf" />
-            <span className="fd-brand-krishi">Krishi</span>Bondhu
-          </a>
-        </nav>
-        <div className="bo-page">
-          <div className="bo-empty">
-            <span>⚠️</span>
-            <h3>Could not load orders</h3>
-            <p>{error}</p>
-          </div>
-        </div>
-      </>
-    );
-
   return (
-    <>
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-      />
-      <nav className="fd-topbar">
-        <a className="fd-brand" href="/buyer_dashboard">
-          <i className="fa-solid fa-leaf" />
-          <span className="fd-brand-krishi">Krishi</span>Bondhu
-        </a>
-      </nav>
+    <BuyerLayout activeNav="orders">
       <div className="bo-page">
         {/* PAGE HEADER */}
         <div className="bo-page-header bo-reveal" ref={addRef}>
@@ -367,11 +364,7 @@ export default function Orders() {
               Track, manage, and export all your procurement orders.
             </p>
           </div>
-          <button
-            className="bo-export-btn"
-            onClick={exportCSV}
-            disabled={allOrders.length === 0}
-          >
+          <button className="bo-export-btn" onClick={exportCSV}>
             <i className="fa-solid fa-file-export" /> Export CSV
           </button>
         </div>
@@ -382,7 +375,7 @@ export default function Orders() {
             {
               icon: "fa-box-open",
               label: "Total Orders",
-              val: allOrders.length,
+              val: ALL_ORDERS.length,
               cls: "bo-kpi-blue",
             },
             {
@@ -426,8 +419,8 @@ export default function Orders() {
                 {tab.label}
                 <span className="bo-tab-count">
                   {tab.id === "all"
-                    ? allOrders.length
-                    : allOrders.filter((o) => o.status === tab.id).length}
+                    ? ALL_ORDERS.length
+                    : ALL_ORDERS.filter((o) => o.status === tab.id).length}
                 </span>
               </button>
             ))}
@@ -445,21 +438,9 @@ export default function Orders() {
 
         {/* TABLE */}
         <div className="bo-table-section bo-reveal" ref={addRef}>
-          {allOrders.length === 0 ? (
+          {filtered.length === 0 ? (
             <div className="bo-empty">
               <span>📦</span>
-              <h3>No orders yet</h3>
-              <p>
-                Place your first order from the{" "}
-                <a href="/buyer/marketplace" style={{ color: "green" }}>
-                  Marketplace
-                </a>
-                .
-              </p>
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="bo-empty">
-              <span>🔍</span>
               <h3>No orders found</h3>
               <p>Try adjusting your search or filter.</p>
             </div>
@@ -486,41 +467,23 @@ export default function Orders() {
                 </thead>
                 <tbody>
                   {filtered.map((o) => {
-                    const { label, cls, icon } = STATUS_META[o.status] || {
-                      label: o.status,
-                      cls: "",
-                      icon: "fa-circle",
-                    };
-                    const { label: payLabel, cls: payCls } = PAY_META[
-                      o.paymentStatus
-                    ] || { label: o.paymentStatus, cls: "" };
-                    const orderDate = new Date(o.createdAt).toLocaleDateString(
-                      "en-US",
-                      { month: "short", day: "numeric", year: "numeric" },
-                    );
-                    const deliveryDate = o.deliveryDate
-                      ? new Date(o.deliveryDate).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })
-                      : "—";
+                    const { label, cls, icon } = STATUS_META[o.status];
+                    const { label: payLabel, cls: payCls } =
+                      PAY_META[o.paymentStatus];
                     return (
                       <tr
-                        key={o._id}
+                        key={o.id}
                         className="bo-table-row"
                         onClick={() => setSelectedOrder(o)}
                       >
-                        <td className="bo-td-id">{o.orderNumber}</td>
+                        <td className="bo-td-id">{o.id}</td>
                         <td className="bo-td-crop">{o.crop}</td>
-                        <td>{o.qtyKg?.toLocaleString()} kg</td>
+                        <td>{o.qty}</td>
                         <td>৳{o.pricePerKg}</td>
-                        <td className="bo-td-total">
-                          ৳{o.totalAmount?.toLocaleString()}
-                        </td>
-                        <td>{o.farmerName || "—"}</td>
-                        <td className="bo-td-date">{orderDate}</td>
-                        <td className="bo-td-date">{deliveryDate}</td>
+                        <td className="bo-td-total">{o.total}</td>
+                        <td>{o.farmer}</td>
+                        <td className="bo-td-date">{o.date}</td>
+                        <td className="bo-td-date">{o.deliveryDate}</td>
                         <td>
                           <span className={`bo-status-badge ${cls}`}>
                             <i className={`fa-solid ${icon}`} /> {label}
@@ -538,12 +501,10 @@ export default function Orders() {
               </table>
             </div>
           )}
-          {allOrders.length > 0 && (
-            <div className="bo-table-footer">
-              Showing {filtered.length} of {allOrders.length} orders — click any
-              row for details
-            </div>
-          )}
+          <div className="bo-table-footer">
+            Showing {filtered.length} of {ALL_ORDERS.length} orders — click any
+            row for details
+          </div>
         </div>
       </div>
 
@@ -552,9 +513,8 @@ export default function Orders() {
         <OrderDetailPanel
           order={selectedOrder}
           onClose={() => setSelectedOrder(null)}
-          onCancel={handleCancel}
         />
       )}
-    </>
+    </BuyerLayout>
   );
 }

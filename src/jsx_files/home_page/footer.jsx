@@ -6,6 +6,7 @@ const quickLinks = [
   { label: "Platform", href: "#sec-title" },
   { label: "Explore", href: "#" },
   { label: "Contact", href: "#contact" },
+  { label: "Admin Login", href: "/admin_login", isRoute: true },
 ];
 
 const secondaryLinks = [

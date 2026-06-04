@@ -1,4 +1,3 @@
-// src/jsx_files/signup_page/buyer_signup.jsx
 import { useState, useRef } from "react";
 import "../../css_files/signup_page/signup.css";
 

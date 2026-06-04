@@ -290,7 +290,7 @@ function UsersTab() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [actionLoading, setActionLoading] = useState(null);
   const [toast, setToast] = useState("");
-  const [viewingDocs, setViewingDocs] = useState(null); // ← এটাই শুধু যোগ করো
+  const [viewingDocs, setViewingDocs] = useState(null);
 
   const showToast = (msg) => {
     setToast(msg);
@@ -302,7 +302,6 @@ function UsersTab() {
       const data = await apiCall("/admin/users");
       setUsers(data.users || []);
     } catch {
-      // Demo users for when backend not connected
       setUsers([
         {
           _id: "1",
@@ -376,7 +375,6 @@ function UsersTab() {
       );
       showToast(`User ${action} successfully.`);
     } catch {
-      // Demo: update locally
       setUsers((prev) =>
         prev.map((u) => (u._id === userId ? { ...u, status: action } : u)),
       );
@@ -663,7 +661,7 @@ function CropsTab() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCrop, setEditingCrop] = useState(null);
   const [form, setForm] = useState(BLANK_CROP);
-  const [imgFile, setImgFile] = useState(null); // ← নতুন যোগ করো
+  const [imgFile, setImgFile] = useState(null);
   const [imgTab, setImgTab] = useState("url");
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -680,7 +678,6 @@ function CropsTab() {
       const data = await apiCall("/admin/crops");
       setCrops(data.crops || []);
     } catch {
-      // Demo data
       setCrops([
         {
           _id: "c1",
@@ -743,7 +740,7 @@ function CropsTab() {
   const openEdit = (crop) => {
     setEditingCrop(crop);
     setForm({ ...crop, tags: (crop.tags || []).join(", ") });
-    setImgFile(null); // ← যোগ করো
+    setImgFile(null);
     setImgTab("url");
     setModalOpen(true);
   };
@@ -759,7 +756,6 @@ function CropsTab() {
     }
     setSaving(true);
 
-    // FormData use করি — file upload support এর জন্য
     const fd = new FormData();
     fd.append("name", form.name.trim());
     fd.append("type", form.type);
@@ -784,7 +780,6 @@ function CropsTab() {
       const res = await fetch(url, {
         method,
         headers: { Authorization: `Bearer ${token}` },
-        // Content-Type দিও না — browser নিজে multipart set করবে
         body: fd,
       });
       const data = await res.json();
@@ -1235,9 +1230,7 @@ function MarketplaceTab() {
   const handleRemove = async (id) => {
     try {
       await apiCall(`/admin/marketplace/${id}`, { method: "DELETE" });
-    } catch {
-      /* demo */
-    }
+    } catch {}
     setListings((prev) => prev.filter((l) => l._id !== id));
     showToast("Listing removed.");
   };
@@ -1445,303 +1438,6 @@ function MarketplaceTab() {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   TAB — MARKET PRICES
-══════════════════════════════════════════════════════════════ */
-const BLANK_PRICE = {
-  cropName: "",
-  price: "",
-  unit: "kg",
-  market: "",
-  change: "",
-  up: true,
-  active: true,
-};
-
-function MarketPricesTab() {
-  const [prices, setPrices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingPrice, setEditingPrice] = useState(null);
-  const [form, setForm] = useState(BLANK_PRICE);
-  const [saving, setSaving] = useState(false);
-  const [toast, setToast] = useState("");
-
-  const showToast = (msg) => {
-    setToast(msg);
-    setTimeout(() => setToast(""), 3000);
-  };
-  const upd = (k, v) => setForm((p) => ({ ...p, [k]: v }));
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await apiCall("/admin/market-prices");
-        setPrices(data.prices || []);
-      } catch {
-        setPrices([]);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
-
-  const handleSave = async () => {
-    if (!form.cropName || !form.price) {
-      showToast("ফসলের নাম ও দাম আবশ্যক।");
-      return;
-    }
-    setSaving(true);
-    try {
-      if (editingPrice) {
-        await apiCall(`/admin/market-prices/${editingPrice._id}`, {
-          method: "PUT",
-          body: JSON.stringify(form),
-        });
-        setPrices((prev) =>
-          prev.map((p) => (p._id === editingPrice._id ? { ...p, ...form } : p)),
-        );
-      } else {
-        const res = await apiCall("/admin/market-prices", {
-          method: "POST",
-          body: JSON.stringify(form),
-        });
-        setPrices((prev) => [
-          ...prev,
-          res.price || { ...form, _id: Date.now().toString() },
-        ]);
-      }
-      showToast(`দাম ${editingPrice ? "আপডেট" : "যোগ"} করা হয়েছে।`);
-      setModalOpen(false);
-    } catch {
-      setPrices((prev) =>
-        editingPrice
-          ? prev.map((p) =>
-              p._id === editingPrice._id ? { ...p, ...form } : p,
-            )
-          : [...prev, { ...form, _id: Date.now().toString() }],
-      );
-      showToast(`দাম ${editingPrice ? "আপডেট" : "যোগ"} করা হয়েছে (demo)।`);
-      setModalOpen(false);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm("এই দামটি মুছে ফেলবেন?")) return;
-    try {
-      await apiCall(`/admin/market-prices/${id}`, { method: "DELETE" });
-    } catch {}
-    setPrices((prev) => prev.filter((p) => p._id !== id));
-    showToast("মুছে ফেলা হয়েছে।");
-  };
-
-  const handleToggleActive = async (item) => {
-    const updated = { ...item, active: !item.active };
-    try {
-      await apiCall(`/admin/market-prices/${item._id}`, {
-        method: "PUT",
-        body: JSON.stringify(updated),
-      });
-    } catch {}
-    setPrices((prev) => prev.map((p) => (p._id === item._id ? updated : p)));
-  };
-
-  return (
-    <div className="ad-tab-content">
-      {toast && <div className="ad-toast">{toast}</div>}
-      <div className="ad-tab-header">
-        <div>
-          <h2>বাজার দর পরিচালনা</h2>
-          <p>Farmer dashboard-এ যে দাম দেখাবে তা এখান থেকে নিয়ন্ত্রণ করুন</p>
-        </div>
-        <button
-          className="ad-btn-primary"
-          onClick={() => {
-            setEditingPrice(null);
-            setForm(BLANK_PRICE);
-            setModalOpen(true);
-          }}
-        >
-          <i className="fa-solid fa-plus" /> নতুন দাম যোগ করুন
-        </button>
-      </div>
-
-      {loading ? (
-        <div className="ad-loading-state">Loading…</div>
-      ) : prices.length === 0 ? (
-        <div className="ad-empty-state">
-          <i className="fa-solid fa-tag" />
-          <p>এখনো কোনো দাম যোগ করা হয়নি।</p>
-        </div>
-      ) : (
-        <div className="ad-mp-table-wrap">
-          <table className="ad-mp-table">
-            <thead>
-              <tr>
-                <th>ফসল</th>
-                <th>দাম (৳/kg)</th>
-                <th>বাজার</th>
-                <th>পরিবর্তন</th>
-                <th>অবস্থা</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {prices.map((item) => (
-                <tr
-                  key={item._id}
-                  className={!item.active ? "ad-mp-row-inactive" : ""}
-                >
-                  <td className="ad-mp-crop">{item.cropName}</td>
-                  <td className="ad-mp-price">
-                    ৳{item.price}
-                    <span>/{item.unit}</span>
-                  </td>
-                  <td className="ad-mp-market">{item.market || "—"}</td>
-                  <td>
-                    {item.change ? (
-                      <span
-                        className={`ad-mp-change ${item.up ? "up" : "down"}`}
-                      >
-                        <i
-                          className={`fa-solid fa-arrow-trend-${item.up ? "up" : "down"}`}
-                        />{" "}
-                        {item.change}
-                      </span>
-                    ) : (
-                      "—"
-                    )}
-                  </td>
-                  <td>
-                    <button
-                      className={`ad-mp-toggle ${item.active ? "active" : "inactive"}`}
-                      onClick={() => handleToggleActive(item)}
-                      title={item.active ? "Farmer-এ দেখাচ্ছে" : "লুকানো আছে"}
-                    >
-                      {item.active ? "সক্রিয়" : "নিষ্ক্রিয়"}
-                    </button>
-                  </td>
-                  <td className="ad-mp-actions">
-                    <button
-                      className="ad-icon-btn edit"
-                      onClick={() => {
-                        setEditingPrice(item);
-                        setForm({
-                          cropName: item.cropName,
-                          price: item.price,
-                          unit: item.unit,
-                          market: item.market,
-                          change: item.change,
-                          up: item.up,
-                          active: item.active,
-                        });
-                        setModalOpen(true);
-                      }}
-                    >
-                      <i className="fa-solid fa-pen" />
-                    </button>
-                    <button
-                      className="ad-icon-btn delete"
-                      onClick={() => handleDelete(item._id)}
-                    >
-                      <i className="fa-solid fa-trash" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title={editingPrice ? "দাম সম্পাদনা করুন" : "নতুন দাম যোগ করুন"}
-      >
-        <div className="ad-form-grid">
-          <div className="ad-form-group">
-            <label>ফসলের নাম *</label>
-            <input
-              value={form.cropName}
-              onChange={(e) => upd("cropName", e.target.value)}
-              placeholder="যেমন: Rice (Boro)"
-            />
-          </div>
-          <div className="ad-form-group">
-            <label>দাম (৳) *</label>
-            <input
-              type="number"
-              value={form.price}
-              onChange={(e) => upd("price", e.target.value)}
-              placeholder="যেমন: 48"
-            />
-          </div>
-          <div className="ad-form-group">
-            <label>একক</label>
-            <input
-              value={form.unit}
-              onChange={(e) => upd("unit", e.target.value)}
-              placeholder="kg"
-            />
-          </div>
-          <div className="ad-form-group">
-            <label>বাজারের নাম</label>
-            <input
-              value={form.market}
-              onChange={(e) => upd("market", e.target.value)}
-              placeholder="যেমন: Karwan Bazar"
-            />
-          </div>
-          <div className="ad-form-group">
-            <label>মূল্য পরিবর্তন</label>
-            <input
-              value={form.change}
-              onChange={(e) => upd("change", e.target.value)}
-              placeholder="যেমন: +2.1% বা −1.4%"
-            />
-          </div>
-          <div className="ad-form-group">
-            <label>প্রবণতা</label>
-            <select
-              value={form.up ? "up" : "down"}
-              onChange={(e) => upd("up", e.target.value === "up")}
-            >
-              <option value="up">↑ বাড়ছে</option>
-              <option value="down">↓ কমছে</option>
-            </select>
-          </div>
-          <div className="ad-form-group">
-            <label>Farmer Dashboard-এ দেখাবে?</label>
-            <select
-              value={form.active ? "yes" : "no"}
-              onChange={(e) => upd("active", e.target.value === "yes")}
-            >
-              <option value="yes">হ্যাঁ, দেখাবে</option>
-              <option value="no">না, লুকাবে</option>
-            </select>
-          </div>
-        </div>
-        <div className="ad-modal-actions">
-          <button className="ad-btn-ghost" onClick={() => setModalOpen(false)}>
-            বাতিল
-          </button>
-          <button
-            className="ad-btn-primary"
-            onClick={handleSave}
-            disabled={saving}
-          >
-            <i className="fa-solid fa-floppy-disk" />{" "}
-            {saving ? "সংরক্ষণ হচ্ছে…" : "সংরক্ষণ করুন"}
-          </button>
-        </div>
-      </Modal>
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════════════════════
    TAB 5 — AGRICULTURAL EXPERTS
 ══════════════════════════════════════════════════════════════ */
 const BLANK_EXPERT = {
@@ -1870,9 +1566,7 @@ function ExpertsTab() {
   const handleDelete = async (id) => {
     try {
       await apiCall(`/admin/experts/${id}`, { method: "DELETE" });
-    } catch {
-      /* demo */
-    }
+    } catch {}
     setExperts((prev) => prev.filter((e) => e._id !== id));
     showToast("Expert removed.");
   };
@@ -2090,11 +1784,6 @@ function ExpertsTab() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-// এই পুরো block টা admin_dashboard.jsx এ ExpertsTab এর পরে
-// এবং ContentTab এর আগে paste করো
-// ─────────────────────────────────────────────────────────────
-
 /* ══════════════════════════════════════════════════════════════
    TAB — DISEASE LIBRARY
 ══════════════════════════════════════════════════════════════ */
@@ -2233,9 +1922,7 @@ function DiseasesTab() {
   const handleDelete = async (id) => {
     try {
       await apiCall(`/admin/diseases/${id}`, { method: "DELETE" });
-    } catch {
-      /* demo */
-    }
+    } catch {}
     setDiseases((prev) => prev.filter((d) => d._id !== id));
     setDeleteId(null);
     showToast("Disease deleted.");
@@ -2593,7 +2280,6 @@ function DiseasesTab() {
 
 /* ══════════════════════════════════════════════════════════════
    TAB 6 — CONTENT BLOCKS
-   Controls: Dashboard hero images, alert banners, advisory text
 ══════════════════════════════════════════════════════════════ */
 const DEFAULT_BLOCKS = [
   {
@@ -2683,9 +2369,7 @@ function ContentTab() {
             }),
           );
         }
-      } catch {
-        /* use defaults */
-      }
+      } catch {}
     })();
   }, []);
 
@@ -2827,7 +2511,6 @@ const NAV_ITEMS = [
   { id: "crops", icon: "fa-seedling", label: "Crop Library" },
   { id: "marketplace", icon: "fa-store", label: "Marketplace" },
   { id: "experts", icon: "fa-user-graduate", label: "Experts" },
-  { id: "market_prices", icon: "fa-tag", label: "Market Prices" },
   { id: "content", icon: "fa-pen-to-square", label: "Content" },
   { id: "diseases", icon: "fa-virus", label: "Diseases" },
 ];
@@ -2848,7 +2531,6 @@ export default function AdminDashboard() {
     crops: <CropsTab />,
     marketplace: <MarketplaceTab />,
     experts: <ExpertsTab />,
-    market_prices: <MarketPricesTab />,
     content: <ContentTab />,
     diseases: <DiseasesTab />,
   };

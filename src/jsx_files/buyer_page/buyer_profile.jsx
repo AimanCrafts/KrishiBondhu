@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
-
+import BuyerLayout from "../../components/BuyerLayout";
 import "../../css_files/buyer_page/buyer_profile.css";
 
 const DIVISIONS = [
@@ -40,7 +40,6 @@ const CROP_INTERESTS = [
 export default function BuyerProfile() {
   const { user, logout } = useAuth();
 
-  /* ── form state pulled from auth context ── */
   const [form, setForm] = useState({
     companyName: user?.profile?.companyName || user?.name || "",
     contactPerson: user?.profile?.contactPerson || user?.name || "",
@@ -62,7 +61,6 @@ export default function BuyerProfile() {
   const revealRefs = useRef([]);
 
   useEffect(() => {
-    // Fetch admin-controlled buyer alert
     fetch("/api/buyer/content/buyer_alert")
       .then((r) => r.json())
       .then((d) => {
@@ -103,7 +101,6 @@ export default function BuyerProfile() {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    // TODO: PUT /api/buyer/profile with form data
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
@@ -129,19 +126,9 @@ export default function BuyerProfile() {
     AVATAR_COLORS[form.companyName.length % AVATAR_COLORS.length];
 
   return (
-    <>
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-      />
-      <nav className="fd-topbar">
-        <a className="fd-brand" href="/buyer_dashboard">
-          <i className="fa-solid fa-leaf" />
-          <span className="fd-brand-krishi">Krishi</span>Bondhu
-        </a>
-      </nav>
+    <BuyerLayout activeNav="profile">
       <div className="bp-page">
-        {/* ADMIN ALERT (set from admin dashboard → Content Blocks) */}
+        {/* ADMIN ALERT */}
         {adminAlert && (
           <div className="bp-admin-alert">
             <i className="fa-solid fa-circle-exclamation" />
@@ -523,6 +510,6 @@ export default function BuyerProfile() {
           </div>
         </div>
       </div>
-    </>
+    </BuyerLayout>
   );
 }

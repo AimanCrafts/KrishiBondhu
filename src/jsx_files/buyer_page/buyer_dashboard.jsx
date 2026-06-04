@@ -2,12 +2,95 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "../../css_files/buyer_page/buyer_dashboard.css";
-import { useBuyerAlert } from "../../hooks/useBuyerAlert";
-import { useMarketListings } from "../../hooks/useMarketListings";
-import NotificationBell from "../../components/NotificationBell";
 
+/* ══════════════════════════════════
+   STATIC DATA
+══════════════════════════════════ */
+const RECENT_ORDERS = [
+  {
+    id: "ORD-4821",
+    crop: "Rice (Boro)",
+    qty: "5,000 kg",
+    price: "৳48/kg",
+    total: "৳2,40,000",
+    status: "delivered",
+    farmer: "Rahim Uddin",
+    date: "Jun 12",
+  },
+  {
+    id: "ORD-4820",
+    crop: "Red Lentil",
+    qty: "2,200 kg",
+    price: "৳110/kg",
+    total: "৳2,42,000",
+    status: "in_transit",
+    farmer: "Karim Sheikh",
+    date: "Jun 14",
+  },
+  {
+    id: "ORD-4819",
+    crop: "Potato",
+    qty: "8,000 kg",
+    price: "৳32/kg",
+    total: "৳2,56,000",
+    status: "confirmed",
+    farmer: "Fatema Begum",
+    date: "Jun 15",
+  },
+  {
+    id: "ORD-4818",
+    crop: "Mustard",
+    qty: "1,500 kg",
+    price: "৳92/kg",
+    total: "৳1,38,000",
+    status: "pending",
+    farmer: "Jalal Ahmed",
+    date: "Jun 16",
+  },
+];
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const MARKET_LISTINGS = [
+  {
+    crop: "Rice (Boro)",
+    farmer: "Rahim Uddin",
+    location: "Gazipur",
+    qty: "12T avail.",
+    price: 48,
+    change: "+2.1%",
+    up: true,
+    img: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    crop: "Red Lentil",
+    farmer: "Karim Sheikh",
+    location: "Comilla",
+    qty: "3T avail.",
+    price: 110,
+    change: "+3.2%",
+    up: true,
+    img: "https://images.unsplash.com/photo-1560493676-04071c5f467b?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    crop: "Potato",
+    farmer: "Fatema Begum",
+    location: "Munshiganj",
+    qty: "22T avail.",
+    price: 32,
+    change: "−1.4%",
+    up: false,
+    img: "https://images.unsplash.com/photo-1553978297-833b17d9f0e0?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    crop: "Mustard",
+    farmer: "Jalal Ahmed",
+    location: "Jamalpur",
+    qty: "5T avail.",
+    price: 92,
+    change: "+0.8%",
+    up: true,
+    img: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=600&q=80",
+  },
+];
 
 const SPEND_BARS = [
   { month: "Jan", val: 65 },
@@ -43,36 +126,6 @@ export default function BuyerDashboard() {
   const [activeNav, setActiveNav] = useState("overview");
   const [todayDate, setTodayDate] = useState("");
   const [barsAnimated, setBarsAnimated] = useState(false);
-  const { alertText, alertLoading } = useBuyerAlert();
-  const { listings, listingsLoading, listingsError } = useMarketListings({
-    limit: 4,
-  });
-
-  /* ── Recent Orders from API ── */
-  const [recentOrders, setRecentOrders] = useState([]);
-  const [ordersLoading, setOrdersLoading] = useState(true);
-  const [ordersError, setOrdersError] = useState(null);
-
-  useEffect(() => {
-    const fetchRecentOrders = async () => {
-      try {
-        const token = localStorage.getItem("kb_token");
-        const res = await fetch(`${API_BASE}/api/buyer/orders`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to fetch orders");
-        const data = await res.json();
-        // Take only the 3 most recent orders (already sorted by createdAt desc from API)
-        setRecentOrders((data.orders || []).slice(0, 3));
-      } catch (err) {
-        setOrdersError(err.message);
-      } finally {
-        setOrdersLoading(false);
-      }
-    };
-    if (user) fetchRecentOrders();
-  }, [user]);
-
   const revealRefs = useRef([]);
 
   /* Derive user info from auth context */
@@ -85,47 +138,6 @@ export default function BuyerDashboard() {
     [user?.profile?.district, user?.profile?.division]
       .filter(Boolean)
       .join(", ") || "Dhaka";
-
-  /* ── Farmer Network from API ── */
-  const [farmers, setFarmers] = useState([]);
-
-  useEffect(() => {
-    const fetchFarmers = async () => {
-      try {
-        const token = localStorage.getItem("kb_token");
-        const res = await fetch(`${API_BASE}/api/buyer/farmers?limit=4`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        setFarmers((data.farmers || []).slice(0, 4));
-      } catch {
-        // silently fail — section just won't show
-      }
-    };
-    if (user) fetchFarmers();
-  }, [user]);
-
-  /* ── Hero stat calculations ── */
-  const activeOrderCount = recentOrders.filter((o) =>
-    ["pending", "confirmed", "in_transit"].includes(o.status),
-  ).length;
-
-  const thisMonthSpend = (() => {
-    const now = new Date();
-    const total = recentOrders
-      .filter((o) => {
-        const d = new Date(o.createdAt);
-        return (
-          d.getMonth() === now.getMonth() &&
-          d.getFullYear() === now.getFullYear() &&
-          o.status !== "cancelled"
-        );
-      })
-      .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-    if (total === 0) return "০";
-    return `${(total / 100000).toFixed(1)}L`;
-  })();
 
   useEffect(() => {
     const d = new Date();
@@ -190,7 +202,10 @@ export default function BuyerDashboard() {
           </div>
 
           <div className="bd-top-right">
-            <NotificationBell />
+            <button className="bd-notif-btn" title="Notifications">
+              <i className="fa-regular fa-bell" />
+              <span className="bd-notif-dot" />
+            </button>
             <div
               className="bd-avatar-wrap"
               onClick={() => navigate("/buyer/profile")}
@@ -268,7 +283,15 @@ export default function BuyerDashboard() {
           </a>
 
           <span className="bd-sidebar-label">Tools</span>
-
+          <a href="#" onClick={() => setSidebarOpen(false)}>
+            <i className="fa-solid fa-file-invoice-dollar" /> Invoices
+          </a>
+          <a href="#" onClick={() => setSidebarOpen(false)}>
+            <i className="fa-solid fa-truck" /> Logistics
+          </a>
+          <a href="#" onClick={() => setSidebarOpen(false)}>
+            <i className="fa-solid fa-comments" /> Messages
+          </a>
           <a href="#" onClick={() => setSidebarOpen(false)}>
             <i className="fa-solid fa-gear" /> Settings
           </a>
@@ -295,26 +318,20 @@ export default function BuyerDashboard() {
                 <span>{contactPerson.split(" ")[0]}.</span>
               </h1>
               <p className="bd-hero-sub">
-                {companyName} has {activeOrderCount} active order
-                {activeOrderCount !== 1 ? "s" : ""} and {listings.length} new
-                listing{listings.length !== 1 ? "s" : ""} matching your
-                procurement preferences today.
+                {companyName} has 2 active orders and 4 new listings matching
+                your procurement preferences today.
               </p>
               <div className="bd-hero-stats-row">
                 <div className="bd-hstat">
-                  <div className="bd-hstat-val bd-val-blue">
-                    {activeOrderCount}
-                  </div>
+                  <div className="bd-hstat-val bd-val-blue">4</div>
                   <div className="bd-hstat-label">Active Orders</div>
                 </div>
                 <div className="bd-hstat">
-                  <div className="bd-hstat-val">৳{thisMonthSpend}</div>
+                  <div className="bd-hstat-val">৳8.76L</div>
                   <div className="bd-hstat-label">This Month</div>
                 </div>
                 <div className="bd-hstat">
-                  <div className="bd-hstat-val bd-val-green">
-                    {farmers.length}
-                  </div>
+                  <div className="bd-hstat-val bd-val-green">23</div>
                   <div className="bd-hstat-label">Farmers Linked</div>
                 </div>
               </div>
@@ -330,89 +347,46 @@ export default function BuyerDashboard() {
               <div className="bd-hero-img-overlay" />
               <div className="bd-hero-right-content">
                 <div className="bd-status-pills">
-                  {/* Pill 1 — most recent in-transit order */}
-                  {recentOrders.find((o) => o.status === "in_transit") ? (
-                    (() => {
-                      const o = recentOrders.find(
-                        (o) => o.status === "in_transit",
-                      );
-                      return (
-                        <div className="bd-status-pill">
-                          <div className="bd-pill-icon bd-pi-ok">
-                            <i className="fa-solid fa-truck" />
-                          </div>
-                          <div className="bd-pill-text">
-                            <strong>Order {o.orderNumber} In Transit</strong>
-                            <span>
-                              {o.crop} · {o.qtyKg?.toLocaleString()} kg
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })()
-                  ) : recentOrders.length > 0 ? (
-                    <div className="bd-status-pill">
-                      <div className="bd-pill-icon bd-pi-ok">
-                        <i className="fa-solid fa-box" />
-                      </div>
-                      <div className="bd-pill-text">
-                        <strong>No orders in transit</strong>
-                        <span>All orders up to date</span>
-                      </div>
+                  <div className="bd-status-pill">
+                    <div className="bd-pill-icon bd-pi-ok">
+                      <i className="fa-solid fa-truck" />
                     </div>
-                  ) : null}
-
-                  {/* Pill 2 — listings count */}
-                  {listings.length > 0 && (
-                    <div className="bd-status-pill">
-                      <div className="bd-pill-icon bd-pi-info">
-                        <i className="fa-solid fa-star" />
-                      </div>
-                      <div className="bd-pill-text">
-                        <strong>
-                          {listings.length} New Farmer Listing
-                          {listings.length !== 1 ? "s" : ""}
-                        </strong>
-                        <span>Available in the marketplace</span>
-                      </div>
+                    <div className="bd-pill-text">
+                      <strong>Order ORD-4820 In Transit</strong>
+                      <span>Red Lentil · 2,200 kg · ETA Jun 17</span>
                     </div>
-                  )}
-
-                  {/* Pill 3 — pending orders nudge */}
-                  {recentOrders.filter((o) => o.status === "pending").length >
-                    0 && (
-                    <div className="bd-status-pill">
-                      <div className="bd-pill-icon bd-pi-warn">
-                        <i className="fa-solid fa-clock" />
-                      </div>
-                      <div className="bd-pill-text">
-                        <strong>
-                          {
-                            recentOrders.filter((o) => o.status === "pending")
-                              .length
-                          }{" "}
-                          Order
-                          {recentOrders.filter((o) => o.status === "pending")
-                            .length !== 1
-                            ? "s"
-                            : ""}{" "}
-                          Awaiting Confirmation
-                        </strong>
-                        <span>Farmer yet to confirm</span>
-                      </div>
+                  </div>
+                  <div className="bd-status-pill">
+                    <div className="bd-pill-icon bd-pi-warn">
+                      <i className="fa-solid fa-triangle-exclamation" />
                     </div>
-                  )}
+                    <div className="bd-pill-text">
+                      <strong>Price Alert: Potato −1.4%</strong>
+                      <span>Good time to place bulk order</span>
+                    </div>
+                  </div>
+                  <div className="bd-status-pill">
+                    <div className="bd-pill-icon bd-pi-info">
+                      <i className="fa-solid fa-star" />
+                    </div>
+                    <div className="bd-pill-text">
+                      <strong>3 New Farmer Listings</strong>
+                      <span>Match your procurement criteria</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </section>
 
           {/* ══ ALERT BANNER ══ */}
-          {!alertLoading && alertText && alertVisible && (
+          {alertVisible && (
             <div className="bd-alert-banner">
               <i className="fa-solid fa-circle-info bd-alert-icon" />
               <div className="bd-alert-text">
-                <strong>Market Notice:</strong> {alertText}
+                <strong>Market Notice:</strong> Rice (Boro) prices expected to
+                rise 3–5% next week due to Aman season shortfall. Consider
+                locking in bulk pricing with verified farmers now.
               </div>
               <button
                 className="bd-alert-dismiss"
@@ -458,29 +432,29 @@ export default function BuyerDashboard() {
                   {
                     icon: "fa-box-open",
                     label: "Total Orders",
-                    val: recentOrders.length,
-                    sub: `${activeOrderCount} active`,
+                    val: "47",
+                    sub: "+12 this month",
                     color: "blue",
                   },
                   {
                     icon: "fa-bangladeshi-taka-sign",
                     label: "Total Spend",
-                    val: `৳${(recentOrders.filter((o) => o.status !== "cancelled").reduce((s, o) => s + (o.totalAmount || 0), 0) / 100000).toFixed(1)}L`,
-                    sub: "From your orders",
+                    val: "৳42.3L",
+                    sub: "FY 2025–26",
                     color: "green",
                   },
                   {
                     icon: "fa-tractor",
                     label: "Active Farmers",
-                    val: farmers.length,
-                    sub: "In the network",
+                    val: "23",
+                    sub: "Across 6 districts",
                     color: "teal",
                   },
                   {
-                    icon: "fa-store",
-                    label: "Live Listings",
-                    val: listings.length,
-                    sub: "In marketplace",
+                    icon: "fa-star",
+                    label: "Avg. Rating",
+                    val: "4.7",
+                    sub: "From 47 orders",
                     color: "amber",
                   },
                 ].map((k) => (
@@ -507,102 +481,52 @@ export default function BuyerDashboard() {
                 <div className="bd-section-eyebrow">Procurement</div>
                 <h2 className="bd-section-title">Recent Orders</h2>
               </div>
-              <a
-                href="#"
-                className="bd-btn-outline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate("/buyer/orders");
-                }}
-              >
+              <a href="#" className="bd-btn-outline">
                 <i className="fa-solid fa-list" /> View All
               </a>
             </div>
 
-            {ordersLoading && (
-              <div className="bd-listings-empty">
-                <i className="fa-solid fa-spinner fa-spin" /> Loading orders…
-              </div>
-            )}
-
-            {!ordersLoading && ordersError && (
-              <div className="bd-listings-empty">
-                <i className="fa-solid fa-triangle-exclamation" /> Could not
-                load orders.
-              </div>
-            )}
-
-            {!ordersLoading && !ordersError && recentOrders.length === 0 && (
-              <div className="bd-listings-empty">
-                <i className="fa-solid fa-box-open" /> No orders yet. Place your
-                first order from the{" "}
-                <a
-                  href="/buyer/marketplace"
-                  style={{
-                    color: "var(--bd-green)",
-                    textDecoration: "underline",
-                  }}
-                >
-                  Marketplace
-                </a>
-                .
-              </div>
-            )}
-
-            {!ordersLoading && !ordersError && recentOrders.length > 0 && (
-              <div className="bd-orders-table-wrap">
-                <table className="bd-orders-table">
-                  <thead>
-                    <tr>
-                      {[
-                        "Order ID",
-                        "Crop",
-                        "Qty (kg)",
-                        "Price/kg",
-                        "Total",
-                        "Farmer",
-                        "Date",
-                        "Status",
-                      ].map((h) => (
-                        <th key={h}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentOrders.map((o) => {
-                      const meta = STATUS_META[o.status] || {
-                        label: o.status,
-                        cls: "",
-                      };
-                      const orderDate = new Date(
-                        o.createdAt,
-                      ).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      });
-                      return (
-                        <tr key={o._id}>
-                          <td className="bd-order-id">{o.orderNumber}</td>
-                          <td className="bd-order-crop">{o.crop}</td>
-                          <td>{o.qtyKg.toLocaleString()}</td>
-                          <td>৳{o.pricePerKg}</td>
-                          <td className="bd-order-total">
-                            ৳{o.totalAmount.toLocaleString()}
-                          </td>
-                          <td>{o.farmerName || "—"}</td>
-                          <td className="bd-order-date">{orderDate}</td>
-                          <td>
-                            <span className={`bd-status-badge ${meta.cls}`}>
-                              {meta.label}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <div className="bd-orders-table-wrap">
+              <table className="bd-orders-table">
+                <thead>
+                  <tr>
+                    {[
+                      "Order ID",
+                      "Crop",
+                      "Qty",
+                      "Price",
+                      "Total",
+                      "Farmer",
+                      "Date",
+                      "Status",
+                    ].map((h) => (
+                      <th key={h}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {RECENT_ORDERS.map((o) => {
+                    const { label, cls } = STATUS_META[o.status];
+                    return (
+                      <tr key={o.id}>
+                        <td className="bd-order-id">{o.id}</td>
+                        <td className="bd-order-crop">{o.crop}</td>
+                        <td>{o.qty}</td>
+                        <td>{o.price}</td>
+                        <td className="bd-order-total">{o.total}</td>
+                        <td>{o.farmer}</td>
+                        <td className="bd-order-date">{o.date}</td>
+                        <td>
+                          <span className={`bd-status-badge ${cls}`}>
+                            {label}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </section>
 
           {/* ══ MARKETPLACE LISTINGS ══ */}
@@ -612,79 +536,48 @@ export default function BuyerDashboard() {
                 <div className="bd-section-eyebrow">Live Marketplace</div>
                 <h2 className="bd-section-title">Available Listings</h2>
               </div>
-              <a href="/buyer/marketplace" className="bd-btn-primary">
+              <a href="#" className="bd-btn-primary">
                 <i className="fa-solid fa-magnifying-glass" /> Browse All
               </a>
             </div>
 
-            {listingsLoading && (
-              <div className="bd-listings-empty">
-                <i className="fa-solid fa-spinner fa-spin" /> Loading listings…
-              </div>
-            )}
-
-            {!listingsLoading && listingsError && (
-              <div className="bd-listings-empty">
-                <i className="fa-solid fa-triangle-exclamation" /> Could not
-                load listings.
-              </div>
-            )}
-
-            {!listingsLoading && !listingsError && listings.length === 0 && (
-              <div className="bd-listings-empty">
-                <i className="fa-solid fa-box-open" /> No active listings right
-                now.
-              </div>
-            )}
-
-            {!listingsLoading && !listingsError && listings.length > 0 && (
-              <div className="bd-listings-grid">
-                {listings.map((l) => (
-                  <div key={l._id} className="bd-listing-card">
-                    <div className="bd-listing-img-wrap">
-                      {l.img ? (
-                        <img src={l.img} alt={l.crop} />
-                      ) : (
-                        <div className="bd-listing-img-placeholder">
-                          <i className="fa-solid fa-seedling" />
-                        </div>
-                      )}
-                      <div className="bd-listing-img-overlay" />
-                      {l.location && (
-                        <div className="bd-listing-location">
-                          <i className="fa-solid fa-location-dot" />{" "}
-                          {l.location}
-                        </div>
-                      )}
-                    </div>
-                    <div className="bd-listing-body">
-                      <div className="bd-listing-crop">{l.crop}</div>
-                      <div className="bd-listing-farmer">
-                        <i className="fa-solid fa-user-circle" /> {l.farmer}
-                      </div>
-                      <div className="bd-listing-meta-row">
-                        <div className="bd-listing-price">
-                          ৳{l.price}
-                          <span>/kg</span>
-                        </div>
-                        {l.featured && (
-                          <div className="bd-listing-change bd-up">
-                            <i className="fa-solid fa-star" /> Featured
-                          </div>
-                        )}
-                      </div>
-                      {l.qty && <div className="bd-listing-qty">{l.qty}</div>}
-                      <button
-                        className="bd-listing-btn"
-                        onClick={() => navigate("/buyer/marketplace")}
-                      >
-                        <i className="fa-solid fa-cart-shopping" /> Place Order
-                      </button>
+            <div className="bd-listings-grid">
+              {MARKET_LISTINGS.map((l, i) => (
+                <div key={i} className="bd-listing-card">
+                  <div className="bd-listing-img-wrap">
+                    <img src={l.img} alt={l.crop} />
+                    <div className="bd-listing-img-overlay" />
+                    <div className="bd-listing-location">
+                      <i className="fa-solid fa-location-dot" /> {l.location}
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+                  <div className="bd-listing-body">
+                    <div className="bd-listing-crop">{l.crop}</div>
+                    <div className="bd-listing-farmer">
+                      <i className="fa-solid fa-user-circle" /> {l.farmer}
+                    </div>
+                    <div className="bd-listing-meta-row">
+                      <div className="bd-listing-price">
+                        ৳{l.price}
+                        <span>/kg</span>
+                      </div>
+                      <div
+                        className={`bd-listing-change ${l.up ? "bd-up" : "bd-down"}`}
+                      >
+                        <i
+                          className={`fa-solid fa-arrow-trend-${l.up ? "up" : "down"}`}
+                        />
+                        {l.change}
+                      </div>
+                    </div>
+                    <div className="bd-listing-qty">{l.qty}</div>
+                    <button className="bd-listing-btn">
+                      <i className="fa-solid fa-cart-shopping" /> Place Order
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </section>
 
           {/* ══ ADVISORY / ACTION PLAN ══ */}
@@ -777,72 +670,69 @@ export default function BuyerDashboard() {
                 <div className="bd-section-eyebrow">Network</div>
                 <h2 className="bd-section-title">Your Farmer Network</h2>
               </div>
-              <a
-                href="#"
-                className="bd-btn-outline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate("/buyer/farmers");
-                }}
-              >
+              <a href="#" className="bd-btn-outline">
                 <i className="fa-solid fa-users" /> All Farmers
               </a>
             </div>
 
-            {farmers.length === 0 ? (
-              <div className="bd-listings-empty">
-                <i className="fa-solid fa-tractor" /> No farmers in the network
-                yet.
-              </div>
-            ) : (
-              <div className="bd-farmers-grid">
-                {farmers.map((f) => {
-                  const displayName = f.name || "Farmer";
-                  const letter = displayName[0].toUpperCase();
-                  const loc =
-                    [f.district, f.division].filter(Boolean).join(", ") ||
-                    "Bangladesh";
-                  const crops =
-                    f.farmData?.cropTypes?.join(", ") ||
-                    f.farmData?.mainCrop ||
-                    "—";
-                  return (
-                    <div key={f._id} className="bd-farmer-card">
-                      <div className="bd-fc-avatar">{letter}</div>
-                      <div className="bd-fc-name">{displayName}</div>
-                      <div className="bd-fc-loc">
-                        <i className="fa-solid fa-location-dot" /> {loc}
-                      </div>
-                      <div className="bd-fc-crops">{crops}</div>
-                      <div className="bd-fc-stats">
-                        <div className="bd-fc-stat">
-                          <div className="bd-fc-stat-val">
-                            {f.farmData?.landAcres
-                              ? `${f.farmData.landAcres} ac`
-                              : "—"}
-                          </div>
-                          <div className="bd-fc-stat-lbl">Land</div>
-                        </div>
-                        <div className="bd-fc-stat">
-                          <div className="bd-fc-stat-val">
-                            {f.farmData?.experience
-                              ? `${f.farmData.experience}y`
-                              : "—"}
-                          </div>
-                          <div className="bd-fc-stat-lbl">Exp.</div>
-                        </div>
-                      </div>
-                      <button
-                        className="bd-fc-btn"
-                        onClick={() => navigate("/buyer/farmers")}
-                      >
-                        <i className="fa-solid fa-comment-dots" /> Contact
-                      </button>
+            <div className="bd-farmers-grid">
+              {[
+                {
+                  name: "Rahim Uddin",
+                  loc: "Gazipur, Dhaka",
+                  crops: "Rice, Mustard",
+                  orders: 12,
+                  rating: 4.9,
+                  letter: "R",
+                },
+                {
+                  name: "Karim Sheikh",
+                  loc: "Comilla",
+                  crops: "Lentil, Chickpea",
+                  orders: 8,
+                  rating: 4.7,
+                  letter: "K",
+                },
+                {
+                  name: "Fatema Begum",
+                  loc: "Munshiganj",
+                  crops: "Potato, Onion",
+                  orders: 15,
+                  rating: 4.8,
+                  letter: "F",
+                },
+                {
+                  name: "Jalal Ahmed",
+                  loc: "Jamalpur",
+                  crops: "Mustard, Wheat",
+                  orders: 6,
+                  rating: 4.6,
+                  letter: "J",
+                },
+              ].map((f) => (
+                <div key={f.name} className="bd-farmer-card">
+                  <div className="bd-fc-avatar">{f.letter}</div>
+                  <div className="bd-fc-name">{f.name}</div>
+                  <div className="bd-fc-loc">
+                    <i className="fa-solid fa-location-dot" /> {f.loc}
+                  </div>
+                  <div className="bd-fc-crops">{f.crops}</div>
+                  <div className="bd-fc-stats">
+                    <div className="bd-fc-stat">
+                      <div className="bd-fc-stat-val">{f.orders}</div>
+                      <div className="bd-fc-stat-lbl">Orders</div>
                     </div>
-                  );
-                })}
-              </div>
-            )}
+                    <div className="bd-fc-stat">
+                      <div className="bd-fc-stat-val">★ {f.rating}</div>
+                      <div className="bd-fc-stat-lbl">Rating</div>
+                    </div>
+                  </div>
+                  <button className="bd-fc-btn">
+                    <i className="fa-solid fa-comment-dots" /> Contact
+                  </button>
+                </div>
+              ))}
+            </div>
           </section>
         </main>
       </div>

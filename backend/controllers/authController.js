@@ -3,10 +3,14 @@ const jwt = require("jsonwebtoken");
 const { v2: cloudinary } = require("cloudinary");
 const fs = require("fs");
 
-const generateToken = (id, role) => {
-  return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: "30d" });
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
+// ─────────────────────────────────────────
+// FARMER SIGNUP
+// POST /api/auth/farmer/signup
+// ─────────────────────────────────────────
 const farmerSignup = async (req, res) => {
   try {
     const { name, phone, password, district, division } = req.body;
@@ -34,7 +38,7 @@ const farmerSignup = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "Farmer account has been created successfully.",
-      token: generateToken(user._id, user.role),
+      token: generateToken(user._id),
       user: {
         id: user._id,
         name: user.name,
@@ -51,6 +55,10 @@ const farmerSignup = async (req, res) => {
   }
 };
 
+// ─────────────────────────────────────────
+// FARMER LOGIN
+// POST /api/auth/farmer/login
+// ─────────────────────────────────────────
 const farmerLogin = async (req, res) => {
   try {
     const { phone, password } = req.body;
@@ -73,7 +81,7 @@ const farmerLogin = async (req, res) => {
 
     res.json({
       success: true,
-      token: generateToken(user._id, user.role),
+      token: generateToken(user._id),
       user: {
         id: user._id,
         name: user.name,
@@ -90,6 +98,10 @@ const farmerLogin = async (req, res) => {
   }
 };
 
+// ─────────────────────────────────────────
+// BUYER SIGNUP
+// POST /api/auth/buyer/signup
+// ─────────────────────────────────────────
 const buyerSignup = async (req, res) => {
   try {
     const {
@@ -116,9 +128,11 @@ const buyerSignup = async (req, res) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({
-        message: "This email is already associated with another account.",
-      });
+      return res
+        .status(400)
+        .json({
+          message: "This email is already associated with another account.",
+        });
     }
 
     const documents = {
@@ -187,6 +201,10 @@ const buyerSignup = async (req, res) => {
   }
 };
 
+// ─────────────────────────────────────────
+// BUYER LOGIN
+// POST /api/auth/buyer/login
+// ─────────────────────────────────────────
 const buyerLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -228,7 +246,7 @@ const buyerLogin = async (req, res) => {
 
     res.json({
       success: true,
-      token: generateToken(user._id, user.role),
+      token: generateToken(user._id),
       user: {
         id: user._id,
         name: user.name,

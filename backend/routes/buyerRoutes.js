@@ -13,11 +13,11 @@ const {
   getContentBlock,
 } = require("../controllers/buyerController");
 
-const userAuth = require("../middleware/userAuth");
+const { verifyToken } = require("../middleware/adminAuth");
 
 router.get("/content/:key", getContentBlock);
 
-router.get("/marketplace", userAuth, getMarketplaceListings);
+router.get("/marketplace", verifyToken, getMarketplaceListings);
 
 const buyerOnly = (req, res, next) => {
   if (req.user.role !== "business" && req.user.role !== "admin") {
@@ -26,15 +26,18 @@ const buyerOnly = (req, res, next) => {
   next();
 };
 
-router.get("/profile", userAuth, buyerOnly, getProfile);
-router.put("/profile", userAuth, buyerOnly, updateProfile);
-router.post("/change-password", userAuth, buyerOnly, changePassword);
+// Profile
+router.get("/profile", verifyToken, buyerOnly, getProfile);
+router.put("/profile", verifyToken, buyerOnly, updateProfile);
+router.post("/change-password", verifyToken, buyerOnly, changePassword);
 
-router.get("/orders", userAuth, buyerOnly, getOrders);
-router.get("/orders/:id", userAuth, buyerOnly, getOrderById);
-router.post("/orders", userAuth, buyerOnly, placeOrder);
-router.patch("/orders/:id/cancel", userAuth, buyerOnly, cancelOrder);
+// Orders
+router.get("/orders", verifyToken, buyerOnly, getOrders);
+router.get("/orders/:id", verifyToken, buyerOnly, getOrderById);
+router.post("/orders", verifyToken, buyerOnly, placeOrder);
+router.patch("/orders/:id/cancel", verifyToken, buyerOnly, cancelOrder);
 
-router.get("/farmers", userAuth, buyerOnly, getFarmerDirectory);
+// Farmer directory (buyers browse farmers)
+router.get("/farmers", verifyToken, buyerOnly, getFarmerDirectory);
 
 module.exports = router;

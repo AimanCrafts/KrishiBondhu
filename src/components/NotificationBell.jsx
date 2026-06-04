@@ -1,3 +1,6 @@
+// src/components/NotificationBell.jsx
+// Import and use in farmer_dashboard.jsx
+
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./NotificationBell.css";
@@ -51,18 +54,18 @@ export default function NotificationBell() {
     }
   };
 
-
+  // Fetch on page load
   useEffect(() => {
     fetchNotifications();
   }, []);
 
-  
+  // Auto-refresh every 30 seconds
   useEffect(() => {
     const interval = setInterval(fetchNotifications, 30000);
     return () => clearInterval(interval);
   }, []);
 
-  
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClick = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -75,7 +78,7 @@ export default function NotificationBell() {
 
   const handleOpen = () => {
     setOpen((prev) => !prev);
-    if (!open) fetchNotifications(); 
+    if (!open) fetchNotifications(); // fetch fresh data when opening
   };
 
   const handleNotifClick = async (notif) => {

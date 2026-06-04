@@ -3,8 +3,19 @@ const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, trim: true },
-    phone: { type: String, trim: true, unique: true, sparse: true },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    phone: {
+      type: String,
+      trim: true,
+      unique: true,
+      sparse: true,
+    },
+
     email: {
       type: String,
       trim: true,
@@ -13,7 +24,10 @@ const userSchema = new mongoose.Schema(
       sparse: true,
     },
 
-    password: { type: String, required: true },
+    password: {
+      type: String,
+      required: true,
+    },
 
     role: {
       type: String,
@@ -27,38 +41,16 @@ const userSchema = new mongoose.Schema(
       default: "pending",
     },
 
-    division: { type: String, default: "", trim: true },
-    district: { type: String, default: "", trim: true },
-
-    profile: {
-      district: { type: String, default: "" },
-      division: { type: String, default: "" },
-      farmSize: { type: String, default: "" },
-      soilType: { type: String, default: "" },
-      bio: { type: String, default: "" },
+    division: {
+      type: String,
+      default: "",
+      trim: true,
     },
 
-    farmData: {
-      onboardingDone: { type: Boolean, default: false },
-
-      currentCrop: {
-        name: { type: String, default: "" },
-        variety: { type: String, default: "" },
-        plantedOn: { type: Date, default: null },
-        areaAcres: { type: Number, default: 0 },
-        fieldName: { type: String, default: "" },
-      },
-
-      plannedCrop: {
-        name: { type: String, default: "" },
-        plannedSowOn: { type: Date, default: null },
-      },
-
-      field: {
-        soilType: { type: String, default: "" },
-        irrigation: { type: String, default: "" },
-        totalAcres: { type: Number, default: 0 },
-      },
+    district: {
+      type: String,
+      default: "",
+      trim: true,
     },
 
     businessInfo: {
@@ -92,7 +84,9 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
+
   const isHashed = this.password.startsWith("$2b$");
+
   if (!isHashed) {
     this.password = await bcrypt.hash(this.password, 10);
   }

@@ -5,7 +5,6 @@ const Expert = require("../models/expert");
 const Content = require("../models/content");
 const Disease = require("../models/disease");
 const Notification = require("../models/notification");
-const MarketPrice = require("../models/marketPrice");
 const jwt = require("jsonwebtoken");
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
@@ -532,105 +531,8 @@ const markAllRead = async (req, res) => {
   }
 };
 
-const getMarketPrices = async (req, res) => {
-  try {
-    const prices = await MarketPrice.find().sort({ createdAt: -1 });
-    res.json({ prices });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-const createMarketPrice = async (req, res) => {
-  try {
-    const price = await MarketPrice.create(req.body);
-    res.status(201).json({ success: true, price });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-const updateMarketPrice = async (req, res) => {
-  try {
-    const price = await MarketPrice.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    if (!price) return res.status(404).json({ message: "Price not found" });
-    res.json({ success: true, price });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-const deleteMarketPrice = async (req, res) => {
-  try {
-    const price = await MarketPrice.findByIdAndDelete(req.params.id);
-    if (!price) return res.status(404).json({ message: "Price not found" });
-    res.json({ success: true, message: "Deleted" });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-const getPublicStats = async (req, res) => {
-  try {
-    const [farmers, buyers, crops] = await Promise.all([
-      User.countDocuments({ role: "farmer" }),
-      User.countDocuments({ role: "business" }),
-      Crop.countDocuments(),
-    ]);
-
-    const rootCounts = await User.aggregate([
-      {
-        $match: {
-          role: "farmer",
-          status: "active",
-          division: { $exists: true, $ne: "" },
-        },
-      },
-      { $group: { _id: "$division", count: { $sum: 1 } } },
-    ]);
-
-    const profileCounts = await User.aggregate([
-      {
-        $match: {
-          role: "farmer",
-          status: "active",
-          $or: [{ division: "" }, { division: { $exists: false } }],
-          "profile.division": { $exists: true, $ne: "" },
-        },
-      },
-      { $group: { _id: "$profile.division", count: { $sum: 1 } } },
-    ]);
-
-    const divisions = {
-      Barishal: 0,
-      Chittagong: 0,
-      Dhaka: 0,
-      Khulna: 0,
-      Mymensingh: 0,
-      Rajshahi: 0,
-      Rangpur: 0,
-      Sylhet: 0,
-    };
-
-    rootCounts.forEach(({ _id, count }) => {
-      if (_id && divisions.hasOwnProperty(_id)) divisions[_id] += count;
-    });
-    profileCounts.forEach(({ _id, count }) => {
-      if (_id && divisions.hasOwnProperty(_id)) divisions[_id] += count;
-    });
-
-    res.json({ farmers, buyers, crops, divisions });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
 module.exports = {
   adminLogin,
-  getPublicStats,
   getStats,
   getUsers,
   updateUserStatus,
@@ -656,8 +558,4 @@ module.exports = {
   getNotifications,
   markNotificationRead,
   markAllRead,
-  getMarketPrices,
-  createMarketPrice,
-  updateMarketPrice,
-  deleteMarketPrice,
 };

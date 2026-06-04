@@ -46,7 +46,6 @@ export function AuthProvider({ children }) {
       if (!currentUser) return;
       if (!session || !currentToken) { logout(); return; }
 
-      // originalToken এখনো set হয়নি — এবার set করো
       if (!originalTokenRef.current) {
         originalTokenRef.current = currentToken;
         return;

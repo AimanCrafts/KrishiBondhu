@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import "../../css_files/home_page/Body.css";
 
+/* ══════════════════════════════════
+   DATA
+══════════════════════════════════ */
 const slides = [
   {
     bg: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1920&ixlib=rb-4.0.3",
@@ -23,6 +26,12 @@ const slides = [
     btnText: "Explore Technology",
     btnHref: "#",
   },
+];
+
+const stats = [
+  { icon: "fa-solid fa-building", target: 125, label: "Registered Companies" },
+  { icon: "fa-solid fa-tractor", target: 70, label: "Farmers Enrolled" },
+  { icon: "fa-solid fa-seedling", target: 200, label: "Crops Inserted" },
 ];
 
 const weatherAnims = [
@@ -76,6 +85,21 @@ const roles = [
     desc: "Manage platform security and operations.",
   },
 ];
+
+/* ══════════════════════════════════
+   DIVISION FARMER DATA
+   (পরে real API দিয়ে replace করুন)
+══════════════════════════════════ */
+const divisionData = {
+  Barishal: { bangla: "Barishal", farmers: 6 },
+  Chittagong: { bangla: "Chittagong", farmers: 14 },
+  Dhaka: { bangla: "Dhaka", farmers: 18 },
+  Khulna: { bangla: "Khulna", farmers: 9 },
+  Mymensingh: { bangla: "Mymensingh", farmers: 7 },
+  Rajshahi: { bangla: "Rajshahi", farmers: 8 },
+  Rangpur: { bangla: "Rangpur", farmers: 5 },
+  Sylhet: { bangla: "Sylhet", farmers: 3 },
+};
 
 /* ══════════════════════════════════
    HERO SLIDER
@@ -136,30 +160,20 @@ function HeroSlider() {
 
 /* ══════════════════════════════════
    STAT BOX
-   — target > 0 হলেই animation শুরু হবে
 ══════════════════════════════════ */
 function StatBox({ icon, target, label }) {
   const countRef = useRef(null);
   const hasAnimated = useRef(false);
 
-  // target বদলালে hasAnimated reset করি
   useEffect(() => {
-    if (target > 0) {
-      hasAnimated.current = false;
-    }
-  }, [target]);
-
-  useEffect(() => {
-    if (!countRef.current) return;
-
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current && target > 0) {
+        if (entry.isIntersecting && !hasAnimated.current) {
           hasAnimated.current = true;
           let count = 0;
           const step = () => {
             if (count <= target) {
-              if (countRef.current) countRef.current.innerText = count++;
+              countRef.current.innerText = count++;
               setTimeout(step, target > 5000 ? 3 : 25);
             }
           };
@@ -168,10 +182,9 @@ function StatBox({ icon, target, label }) {
       },
       { threshold: 0.4 },
     );
-
-    observer.observe(countRef.current);
+    if (countRef.current) observer.observe(countRef.current);
     return () => observer.disconnect();
-  }, [target]); // target বদলালে observer নতুন করে setup হবে
+  }, [target]);
 
   return (
     <div className="stat-box">
@@ -238,79 +251,17 @@ function WeatherSection() {
 }
 
 /* ══════════════════════════════════
-   PUBLIC STATS HOOK
-══════════════════════════════════ */
-function usePublicStats() {
-  const [stats, setStats] = useState([]);
-  const [divisionData, setDivisionData] = useState({});
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/public-stats`)
-      .then((res) => res.json())
-      .then((data) => {
-        setStats([
-          {
-            icon: "fa-solid fa-building",
-            target: data.buyers,
-            label: "Registered Companies",
-          },
-          {
-            icon: "fa-solid fa-tractor",
-            target: data.farmers,
-            label: "Farmers Enrolled",
-          },
-          {
-            icon: "fa-solid fa-seedling",
-            target: data.crops,
-            label: "Crops Inserted",
-          },
-        ]);
-
-        const banglaNames = {
-          Barishal: "Barishal",
-          Chittagong: "Chittagong",
-          Dhaka: "Dhaka",
-          Khulna: "Khulna",
-          Mymensingh: "Mymensingh",
-          Rajshahi: "Rajshahi",
-          Rangpur: "Rangpur",
-          Sylhet: "Sylhet",
-        };
-        const built = {};
-        Object.entries(data.divisions).forEach(([name, count]) => {
-          built[name] = { bangla: banglaNames[name] || name, farmers: count };
-        });
-        setDivisionData(built);
-      })
-      .catch(() => {
-        setStats([
-          {
-            icon: "fa-solid fa-building",
-            target: 0,
-            label: "Registered Companies",
-          },
-          { icon: "fa-solid fa-tractor", target: 0, label: "Farmers Enrolled" },
-          { icon: "fa-solid fa-seedling", target: 0, label: "Crops Inserted" },
-        ]);
-        setDivisionData({});
-      })
-      .finally(() => setLoading(false));
-  }, []);
-
-  return { stats, divisionData, loading };
-}
-
-/* ══════════════════════════════════
    BANGLADESH MAP SECTION
+   SVG → public/bd_map.svg এ রাখুন
+   fetch() দিয়ে load হয়, তাই
+   querySelector দিয়ে event bind করা যায়
 ══════════════════════════════════ */
-function BangladeshMap({ divisionData, loading }) {
+function BangladeshMap() {
   const wrapperRef = useRef(null);
   const [tooltip, setTooltip] = useState(null);
   const [activeDiv, setActiveDiv] = useState(null);
-  const [svgReady, setSvgReady] = useState(false);
 
-  /* ── Step 1: SVG একবারই load হবে ── */
+  /* ── Step 1: public/bd_map.svg fetch করে innerHTML-এ বসাই ── */
   useEffect(() => {
     fetch("/bd_map.svg")
       .then((res) => res.text())
@@ -318,55 +269,46 @@ function BangladeshMap({ divisionData, loading }) {
         if (!wrapperRef.current) return;
         wrapperRef.current.innerHTML = svgText;
 
+        // SVG-এর className সেট করি
         const svgEl = wrapperRef.current.querySelector("svg");
         if (svgEl) {
           svgEl.classList.add("bd-map-svg");
           svgEl.setAttribute("preserveAspectRatio", "xMidYMid meet");
         }
-        setSvgReady(true);
-      });
-  }, []); // শুধু একবার
 
-  /* ── Step 2: SVG ready এবং divisionData দুইটাই আসলে events bind হবে ── */
-  useEffect(() => {
-    if (
-      !svgReady ||
-      !wrapperRef.current ||
-      Object.keys(divisionData).length === 0
-    )
-      return;
+        /* ── Step 2: প্রতিটি division <g id="Barishal"> ইত্যাদিতে event bind ── */
+        Object.keys(divisionData).forEach((name) => {
+          const group = wrapperRef.current.querySelector(`#${name}`);
+          if (!group) return;
 
-    Object.keys(divisionData).forEach((name) => {
-      const group = wrapperRef.current.querySelector(`#${name}`);
-      if (!group) return;
+          group.style.cursor = "pointer";
 
-      group.style.cursor = "pointer";
+          group.addEventListener("mouseenter", (e) => {
+            setActiveDiv(name);
+            const rect = wrapperRef.current.getBoundingClientRect();
+            setTooltip({
+              division: name,
+              x: e.clientX - rect.left,
+              y: e.clientY - rect.top,
+            });
+          });
 
-      group.addEventListener("mouseenter", (e) => {
-        setActiveDiv(name);
-        const rect = wrapperRef.current.getBoundingClientRect();
-        setTooltip({
-          division: name,
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
+          group.addEventListener("mousemove", (e) => {
+            const rect = wrapperRef.current.getBoundingClientRect();
+            setTooltip((prev) =>
+              prev
+                ? { ...prev, x: e.clientX - rect.left, y: e.clientY - rect.top }
+                : null,
+            );
+          });
+
+          group.addEventListener("mouseleave", () => {
+            setTooltip(null);
+            setActiveDiv(null);
+          });
         });
       });
-
-      group.addEventListener("mousemove", (e) => {
-        const rect = wrapperRef.current.getBoundingClientRect();
-        setTooltip((prev) =>
-          prev
-            ? { ...prev, x: e.clientX - rect.left, y: e.clientY - rect.top }
-            : null,
-        );
-      });
-
-      group.addEventListener("mouseleave", () => {
-        setTooltip(null);
-        setActiveDiv(null);
-      });
-    });
-  }, [svgReady, divisionData]); // দুইটাই ready হলে bind হবে
+  }, []);
 
   /* ── Step 3: activeDiv বদলালে highlight/dim করি ── */
   useEffect(() => {
@@ -390,8 +332,9 @@ function BangladeshMap({ divisionData, loading }) {
         group.style.opacity = "1";
       }
     });
-  }, [activeDiv, divisionData]);
+  }, [activeDiv]);
 
+  /* ── Tooltip map-এর বাইরে না যায় ── */
   const tooltipStyle = () => {
     if (!tooltip || !wrapperRef.current) return {};
     const { offsetWidth: W, offsetHeight: H } = wrapperRef.current;
@@ -411,7 +354,9 @@ function BangladeshMap({ divisionData, loading }) {
 
   return (
     <section className="map-section reveal">
+      {/* ── Intro Text ── */}
       <div className="map-intro">
+        <span className="map-badge">🗺️ KrishiBondhu Coverage</span>
         <h2 className="section-title map-title">
           Our Farmers Are Spread Across Bangladesh
         </h2>
@@ -420,15 +365,28 @@ function BangladeshMap({ divisionData, loading }) {
           Bangladesh. Hover over any division on the map to see the number of
           registered farmers in that area.
         </p>
+        <div className="map-stats-row">
+          <div className="map-stat-pill">
+            <i className="fa-solid fa-map-location-dot"></i>
+            <span>8 Divisions</span>
+          </div>
+          <div className="map-stat-pill">
+            <i className="fa-solid fa-tractor"></i>
+            <span>70+ Registered Farmers</span>
+          </div>
+          <div className="map-stat-pill">
+            <i className="fa-solid fa-seedling"></i>
+            <span>Growing Every Day</span>
+          </div>
+        </div>
       </div>
 
+      {/* ── Map ── */}
       <div className="map-wrapper">
-        {loading && (
-          <div style={{ textAlign: "center", padding: "2rem", color: "#666" }}>
-            Loading map data...
-          </div>
-        )}
+        {/* SVG এখানে fetch করে inject হবে */}
         <div className="bd-map-container" ref={wrapperRef} />
+
+        {/* ── Tooltip Card ── */}
         {tooltip && data && (
           <div className="division-tooltip" style={tooltipStyle()}>
             <div className="tooltip-header">
@@ -455,8 +413,6 @@ function BangladeshMap({ divisionData, loading }) {
    MAIN BODY
 ══════════════════════════════════ */
 export default function Body() {
-  const { stats, divisionData, loading } = usePublicStats();
-
   return (
     <>
       <HeroSlider />
@@ -470,8 +426,8 @@ export default function Body() {
         </div>
       </section>
 
-      {/* Map */}
-      <BangladeshMap divisionData={divisionData} loading={loading} />
+      {/* Map — stats-এর ঠিক নিচে */}
+      <BangladeshMap />
 
       {/* Feature 1: Weather */}
       <WeatherSection />

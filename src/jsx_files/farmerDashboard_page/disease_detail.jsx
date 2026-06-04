@@ -1,5 +1,3 @@
-// src/jsx_files/farmerDashboard_page/disease_detail.jsx
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../css_files/farmerDashboard_page/disease_detail.css";

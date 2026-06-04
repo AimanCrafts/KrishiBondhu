@@ -10,7 +10,6 @@ import Login from "./jsx_files/login_page/login";
 import AdminLogin from "./jsx_files/login_page/AdminLogin";
 import Signup from "./jsx_files/signup_page/signup";
 import FarmerDashboard from "./jsx_files/farmerDashboard_page/farmer_dashboard";
-import FarmerOnboarding from "./jsx_files/farmerDashboard_page/FarmerOnboarding"; // NEW
 import BuyerDashboard from "./jsx_files/buyer_page/buyer_dashboard";
 import AdminDashboard from "./jsx_files/admin_page/admin_dashboard";
 import CropManagement from "./jsx_files/farmerDashboard_page/crop_management";
@@ -22,8 +21,6 @@ import CropDetail from "./jsx_files/farmerDashboard_page/crop_detail";
 import CropDisease from "./jsx_files/farmerDashboard_page/crop_disease";
 import DiseaseDetail from "./jsx_files/farmerDashboard_page/disease_detail";
 import Settings from "./jsx_files/farmerDashboard_page/settings";
-import ConsultExpert from "./jsx_files/farmerDashboard_page/consult_expert";
-import MyListings from "./jsx_files/farmerDashboard_page/MyListings";
 import TermsAndConditions from "./jsx_files/legal_page/terms_and_conditions";
 import PrivacyPolicy from "./jsx_files/legal_page/privacy_policy";
 
@@ -36,6 +33,8 @@ function HomePage() {
     </>
   );
 }
+
+// ← REMOVED the two floating <Route> lines that were here
 
 function App() {
   return (
@@ -81,22 +80,6 @@ function App() {
           <Route path="/privacy" element={<PrivacyPolicy />} />
 
           {/* ── Farmer ── */}
-
-          {/*
-            /onboarding — shown after first login.
-            ProtectedRoute ensures only logged-in farmers can reach it.
-            The page itself redirects to /farmer_dashboard after saving.
-          */}
-          <Route
-            path="/onboarding"
-            element={
-              <ProtectedRoute allowedRole="farmer">
-                <FarmerOnboarding />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Both /dashboard and /farmer_dashboard go to the same component */}
           <Route
             path="/dashboard"
             element={
@@ -113,7 +96,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/crop_library"
             element={
@@ -151,22 +133,6 @@ function App() {
             element={
               <ProtectedRoute allowedRole="farmer">
                 <Settings />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/consult-expert"
-            element={
-              <ProtectedRoute allowedRole="farmer">
-                <ConsultExpert />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/my-listings"
-            element={
-              <ProtectedRoute allowedRole="farmer">
-                <MyListings />
               </ProtectedRoute>
             }
           />

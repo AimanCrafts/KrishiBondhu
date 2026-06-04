@@ -977,14 +977,12 @@ function OtpLoginForm({ onLogin }) {
 ══════════════════════════════════ */
 export default function Login() {
   const navigate = useNavigate();
-  const { login,  } = useAuth();
+  const { login } = useAuth();
   const [tab, setTab] = useState("farmer");
-
-  
 
   const handleLogin = (userData) => {
     login(userData);
-    navigate(dashboardPath(userData.role), { replace: true });
+    navigate(dashboardPath(userData.role));
   };
 
   const TABS = [

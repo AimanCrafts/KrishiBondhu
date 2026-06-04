@@ -1,10 +1,190 @@
-// src/jsx_files/buyer_page/marketplace.jsx
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
-
+import BuyerLayout from "../../components/BuyerLayout";
 import "../../css_files/buyer_page/marketplace.css";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const ALL_LISTINGS = [
+  {
+    id: 1,
+    crop: "Rice (Boro)",
+    type: "grain",
+    farmer: "Rahim Uddin",
+    location: "Gazipur, Dhaka",
+    division: "dhaka",
+    qty: "12T",
+    qtyNum: 12000,
+    price: 48,
+    change: "+2.1%",
+    up: true,
+    featured: true,
+    img: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: 2,
+    crop: "Red Lentil",
+    type: "pulse",
+    farmer: "Karim Sheikh",
+    location: "Comilla",
+    division: "chittagong",
+    qty: "3T",
+    qtyNum: 3000,
+    price: 110,
+    change: "+3.2%",
+    up: true,
+    featured: false,
+    img: "https://images.unsplash.com/photo-1560493676-04071c5f467b?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: 3,
+    crop: "Potato",
+    type: "vegetable",
+    farmer: "Fatema Begum",
+    location: "Munshiganj",
+    division: "dhaka",
+    qty: "22T",
+    qtyNum: 22000,
+    price: 32,
+    change: "−1.4%",
+    up: false,
+    featured: true,
+    img: "https://images.unsplash.com/photo-1553978297-833b17d9f0e0?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: 4,
+    crop: "Mustard",
+    type: "cash",
+    farmer: "Jalal Ahmed",
+    location: "Jamalpur",
+    division: "mymensingh",
+    qty: "5T",
+    qtyNum: 5000,
+    price: 92,
+    change: "+0.8%",
+    up: true,
+    featured: false,
+    img: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: 5,
+    crop: "Mango",
+    type: "fruit",
+    farmer: "Selim Hossain",
+    location: "Rajshahi",
+    division: "rajshahi",
+    qty: "8T",
+    qtyNum: 8000,
+    price: 65,
+    change: "+5.1%",
+    up: true,
+    featured: true,
+    img: "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: 6,
+    crop: "Wheat",
+    type: "grain",
+    farmer: "Nurul Islam",
+    location: "Rangpur",
+    division: "rangpur",
+    qty: "15T",
+    qtyNum: 15000,
+    price: 38,
+    change: "+1.1%",
+    up: true,
+    featured: false,
+    img: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: 7,
+    crop: "Tomato",
+    type: "vegetable",
+    farmer: "Amina Khatun",
+    location: "Jessore, Khulna",
+    division: "khulna",
+    qty: "4T",
+    qtyNum: 4000,
+    price: 55,
+    change: "−2.0%",
+    up: false,
+    featured: false,
+    img: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: 8,
+    crop: "Sugarcane",
+    type: "cash",
+    farmer: "Rafiq Mia",
+    location: "Rajshahi, Natore",
+    division: "rajshahi",
+    qty: "30T",
+    qtyNum: 30000,
+    price: 12,
+    change: "+0.3%",
+    up: true,
+    featured: false,
+    img: "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: 9,
+    crop: "Banana",
+    type: "fruit",
+    farmer: "Hanif Sheikh",
+    location: "Sylhet",
+    division: "sylhet",
+    qty: "6T",
+    qtyNum: 6000,
+    price: 28,
+    change: "+1.7%",
+    up: true,
+    featured: true,
+    img: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: 10,
+    crop: "Jute",
+    type: "cash",
+    farmer: "Shahidul Alam",
+    location: "Faridpur",
+    division: "dhaka",
+    qty: "9T",
+    qtyNum: 9000,
+    price: 45,
+    change: "−0.5%",
+    up: false,
+    featured: false,
+    img: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: 11,
+    crop: "Maize",
+    type: "grain",
+    farmer: "Bahar Uddin",
+    location: "Dinajpur, Rangpur",
+    division: "rangpur",
+    qty: "18T",
+    qtyNum: 18000,
+    price: 29,
+    change: "+2.8%",
+    up: true,
+    featured: false,
+    img: "https://images.unsplash.com/photo-1601648764658-cf37e8c89b70?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: 12,
+    crop: "Onion",
+    type: "vegetable",
+    farmer: "Sohag Mia",
+    location: "Faridpur, Dhaka",
+    division: "dhaka",
+    qty: "7T",
+    qtyNum: 7000,
+    price: 80,
+    change: "+4.5%",
+    up: true,
+    featured: true,
+    img: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&w=600&q=80",
+  },
+];
 
 const DIVISIONS = [
   "all",
@@ -28,14 +208,11 @@ const SORTS = [
 
 function sortListings(arr, sort) {
   const s = [...arr];
-  if (sort === "featured")
-    return s.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+  if (sort === "featured") return s.sort((a, b) => b.featured - a.featured);
   if (sort === "price_asc") return s.sort((a, b) => a.price - b.price);
   if (sort === "price_desc") return s.sort((a, b) => b.price - a.price);
-  if (sort === "qty_desc")
-    return s.sort((a, b) => (b.qtyNum || 0) - (a.qtyNum || 0));
-  if (sort === "change_asc")
-    return s.sort((a, b) => (a.up ? 1 : 0) - (b.up ? 1 : 0));
+  if (sort === "qty_desc") return s.sort((a, b) => b.qtyNum - a.qtyNum);
+  if (sort === "change_asc") return s.sort((a, b) => a.up - b.up);
   return s;
 }
 
@@ -43,68 +220,7 @@ function sortListings(arr, sort) {
 function OrderModal({ listing, onClose }) {
   const [qty, setQty] = useState(100);
   const [note, setNote] = useState("");
-  const [placing, setPlacing] = useState(false);
-  const [success, setSuccess] = useState(false);
   const total = (qty * listing.price).toLocaleString("en-BD");
-
-  const handleConfirm = async () => {
-    setPlacing(true);
-    try {
-      const token = localStorage.getItem("kb_token");
-      const res = await fetch(`${API_BASE}/api/buyer/orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          listingId: listing._id,
-          crop: listing.crop,
-          qtyKg: qty,
-          pricePerKg: listing.price,
-          farmerName: listing.farmer,
-          farmerLocation: listing.location,
-          note,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Order failed");
-      setSuccess(true);
-    } catch (err) {
-      alert("Order place করতে সমস্যা হয়েছে: " + err.message);
-    } finally {
-      setPlacing(false);
-    }
-  };
-
-  if (success) {
-    return (
-      <div className="bm-modal-overlay" onClick={onClose}>
-        <div className="bm-modal" onClick={(e) => e.stopPropagation()}>
-          <div
-            className="bm-modal-body"
-            style={{ textAlign: "center", padding: "40px 20px" }}
-          >
-            <i
-              className="fa-solid fa-circle-check"
-              style={{ fontSize: "3rem", color: "#16a34a", marginBottom: 16 }}
-            />
-            <h3 style={{ marginBottom: 8 }}>Order Placed Successfully!</h3>
-            <p style={{ color: "#6b7280" }}>
-              {qty} kg of {listing.crop} — ৳{total}
-            </p>
-            <button
-              className="bm-modal-confirm"
-              style={{ marginTop: 24 }}
-              onClick={onClose}
-            >
-              Done
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bm-modal-overlay" onClick={onClose}>
@@ -119,13 +235,11 @@ function OrderModal({ listing, onClose }) {
         </div>
         <div className="bm-modal-body">
           <div className="bm-modal-crop-row">
-            {listing.img && (
-              <img
-                src={listing.img}
-                alt={listing.crop}
-                className="bm-modal-crop-img"
-              />
-            )}
+            <img
+              src={listing.img}
+              alt={listing.crop}
+              className="bm-modal-crop-img"
+            />
             <div>
               <div className="bm-modal-crop-name">{listing.crop}</div>
               <div className="bm-modal-crop-meta">
@@ -147,12 +261,10 @@ function OrderModal({ listing, onClose }) {
             className="bm-modal-input"
             value={qty}
             min={1}
-            max={listing.qtyNum || 99999}
+            max={listing.qtyNum}
             onChange={(e) => setQty(Number(e.target.value))}
           />
-          {listing.qty && (
-            <div className="bm-modal-avail">Available: {listing.qty}</div>
-          )}
+          <div className="bm-modal-avail">Available: {listing.qty}</div>
 
           <label className="bm-modal-label">Special Notes (optional)</label>
           <textarea
@@ -173,18 +285,14 @@ function OrderModal({ listing, onClose }) {
           </button>
           <button
             className="bm-modal-confirm"
-            onClick={handleConfirm}
-            disabled={placing}
+            onClick={() => {
+              alert(
+                `Order for ${qty}kg of ${listing.crop} placed! (Connect backend for live orders)`,
+              );
+              onClose();
+            }}
           >
-            {placing ? (
-              <>
-                <i className="fa-solid fa-spinner fa-spin" /> Placing…
-              </>
-            ) : (
-              <>
-                <i className="fa-solid fa-check" /> Confirm Order
-              </>
-            )}
+            <i className="fa-solid fa-check" /> Confirm Order
           </button>
         </div>
       </div>
@@ -195,11 +303,6 @@ function OrderModal({ listing, onClose }) {
 /* ── Main Component ── */
 export default function Marketplace() {
   const { user } = useAuth();
-
-  // ── State ──────────────────────────────────────────────────
-  const [allListings, setAllListings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [divFilter, setDivFilter] = useState("all");
@@ -209,31 +312,8 @@ export default function Marketplace() {
   const [selectedListing, setSelectedListing] = useState(null);
   const revealRefs = useRef([]);
 
-  // ── Fetch listings from backend ────────────────────────────
   useEffect(() => {
-    const fetchListings = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const token = localStorage.getItem("kb_token");
-        const res = await fetch(`${API_BASE}/api/buyer/marketplace`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Failed to load listings");
-        setAllListings(data.listings || []);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchListings();
-  }, []);
-
-  // ── Fetch admin market notice ──────────────────────────────
-  useEffect(() => {
-    fetch(`${API_BASE}/api/buyer/content/market_notice`)
+    fetch("/api/buyer/content/market_notice")
       .then((r) => r.json())
       .then((d) => {
         if (d.value) setMarketNotice(d.value);
@@ -241,7 +321,6 @@ export default function Marketplace() {
       .catch(() => {});
   }, []);
 
-  // ── Scroll reveal ──────────────────────────────────────────
   useEffect(() => {
     const obs = new IntersectionObserver(
       (entries) =>
@@ -255,21 +334,19 @@ export default function Marketplace() {
     );
     revealRefs.current.forEach((el) => el && obs.observe(el));
     return () => obs.disconnect();
-  }, [allListings]);
+  }, []);
 
   const addRef = (el) => {
     if (el && !revealRefs.current.includes(el)) revealRefs.current.push(el);
   };
 
-  // ── Filter + Sort ──────────────────────────────────────────
   const filtered = sortListings(
-    allListings.filter((l) => {
+    ALL_LISTINGS.filter((l) => {
       const matchSearch =
-        (l.crop || "").toLowerCase().includes(search.toLowerCase()) ||
-        (l.farmer || "").toLowerCase().includes(search.toLowerCase());
+        l.crop.toLowerCase().includes(search.toLowerCase()) ||
+        l.farmer.toLowerCase().includes(search.toLowerCase());
       const matchType = typeFilter === "all" || l.type === typeFilter;
-      const matchDiv =
-        divFilter === "all" || (l.division || "").toLowerCase() === divFilter;
+      const matchDiv = divFilter === "all" || l.division === divFilter;
       const matchFeatured = !featuredOnly || l.featured;
       return matchSearch && matchType && matchDiv && matchFeatured;
     }),
@@ -277,17 +354,7 @@ export default function Marketplace() {
   );
 
   return (
-    <>
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-      />
-      <nav className="fd-topbar">
-        <a className="fd-brand" href="/buyer_dashboard">
-          <i className="fa-solid fa-leaf" />
-          <span className="fd-brand-krishi">Krishi</span>Bondhu
-        </a>
-      </nav>
+    <BuyerLayout activeNav="marketplace">
       <div className="bm-page">
         {/* HERO */}
         <section className="bm-hero">
@@ -306,40 +373,24 @@ export default function Marketplace() {
             <div className="bm-hero-stats">
               <div className="bm-hstat">
                 <i className="fa-solid fa-seedling" />
-                <strong>{loading ? "…" : allListings.length}</strong>
+                <strong>{ALL_LISTINGS.length}</strong>
                 <span>Active Listings</span>
               </div>
               <div className="bm-hstat">
                 <i className="fa-solid fa-location-dot" />
-                <strong>
-                  {loading
-                    ? "…"
-                    : [
-                        ...new Set(
-                          allListings.map((l) => l.division).filter(Boolean),
-                        ),
-                      ].length || 8}
-                </strong>
+                <strong>8</strong>
                 <span>Divisions</span>
               </div>
               <div className="bm-hstat">
                 <i className="fa-solid fa-tractor" />
-                <strong>
-                  {loading
-                    ? "…"
-                    : [
-                        ...new Set(
-                          allListings.map((l) => l.farmer).filter(Boolean),
-                        ),
-                      ].length || "—"}
-                </strong>
+                <strong>120+</strong>
                 <span>Verified Farmers</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* MARKET NOTICE */}
+        {/* ADMIN NOTICE */}
         {marketNotice && (
           <div className="bm-notice-banner">
             <i className="fa-solid fa-circle-info" />{" "}
@@ -413,117 +464,72 @@ export default function Marketplace() {
         </div>
 
         <div className="bm-results-meta bm-reveal" ref={addRef}>
-          Showing <strong>{filtered.length}</strong> of {allListings.length}{" "}
+          Showing <strong>{filtered.length}</strong> of {ALL_LISTINGS.length}{" "}
           listings
         </div>
 
-        {/* LOADING STATE */}
-        {loading && (
-          <div className="bm-empty">
-            <i
-              className="fa-solid fa-spinner fa-spin"
-              style={{ fontSize: "2rem", color: "#16a34a" }}
-            />
-            <h3>Loading listings…</h3>
-          </div>
-        )}
-
-        {/* ERROR STATE */}
-        {!loading && error && (
-          <div className="bm-empty">
-            <span>⚠️</span>
-            <h3>Could not load listings</h3>
-            <p>{error}</p>
-          </div>
-        )}
-
         {/* GRID */}
-        {!loading && !error && (
-          <div className="bm-grid bm-reveal" ref={addRef}>
-            {filtered.length === 0 ? (
-              <div className="bm-empty">
-                <span>🌾</span>
-                <h3>No listings found</h3>
-                <p>Try adjusting your filters or search term.</p>
-              </div>
-            ) : (
-              filtered.map((l, i) => (
-                <div
-                  key={l._id}
-                  className={`bm-card${l.featured ? " bm-card-featured" : ""}`}
-                  style={{ animationDelay: `${i * 0.05}s` }}
-                >
-                  {l.featured && (
-                    <div className="bm-featured-badge">
-                      <i className="fa-solid fa-star" /> Featured
-                    </div>
-                  )}
-                  <div className="bm-card-img-wrap">
-                    {l.img ? (
-                      <img src={l.img} alt={l.crop} loading="lazy" />
-                    ) : (
-                      <div
-                        style={{
-                          height: 180,
-                          background: "#f0fdf4",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <i
-                          className="fa-solid fa-seedling"
-                          style={{ fontSize: "3rem", color: "#16a34a" }}
-                        />
-                      </div>
-                    )}
-                    <div className="bm-card-img-overlay" />
-                    {l.location && (
-                      <div className="bm-card-location">
-                        <i className="fa-solid fa-location-dot" /> {l.location}
-                      </div>
-                    )}
+        <div className="bm-grid bm-reveal" ref={addRef}>
+          {filtered.length === 0 ? (
+            <div className="bm-empty">
+              <span>🌾</span>
+              <h3>No listings found</h3>
+              <p>Try adjusting your filters or search term.</p>
+            </div>
+          ) : (
+            filtered.map((l, i) => (
+              <div
+                key={l.id}
+                className={`bm-card${l.featured ? " bm-card-featured" : ""}`}
+                style={{ animationDelay: `${i * 0.05}s` }}
+              >
+                {l.featured && (
+                  <div className="bm-featured-badge">
+                    <i className="fa-solid fa-star" /> Featured
                   </div>
-                  <div className="bm-card-body">
-                    {l.type && <div className="bm-card-type-tag">{l.type}</div>}
-                    <div className="bm-card-crop">{l.crop}</div>
-                    <div className="bm-card-farmer">
-                      <i className="fa-solid fa-user-circle" /> {l.farmer}
-                    </div>
-                    <div className="bm-card-price-row">
-                      <div className="bm-card-price">
-                        ৳{l.price}
-                        <span>/kg</span>
-                      </div>
-                      {l.change && (
-                        <div
-                          className={`bm-card-change ${l.up ? "bm-up" : "bm-down"}`}
-                        >
-                          <i
-                            className={`fa-solid fa-arrow-trend-${l.up ? "up" : "down"}`}
-                          />{" "}
-                          {l.change}
-                        </div>
-                      )}
-                    </div>
-                    {l.qty && (
-                      <div className="bm-card-qty">
-                        <i className="fa-solid fa-scale-balanced" /> {l.qty}{" "}
-                        available
-                      </div>
-                    )}
-                    <button
-                      className="bm-card-btn"
-                      onClick={() => setSelectedListing(l)}
-                    >
-                      <i className="fa-solid fa-cart-shopping" /> Place Order
-                    </button>
+                )}
+                <div className="bm-card-img-wrap">
+                  <img src={l.img} alt={l.crop} loading="lazy" />
+                  <div className="bm-card-img-overlay" />
+                  <div className="bm-card-location">
+                    <i className="fa-solid fa-location-dot" /> {l.location}
                   </div>
                 </div>
-              ))
-            )}
-          </div>
-        )}
+                <div className="bm-card-body">
+                  <div className="bm-card-type-tag">{l.type}</div>
+                  <div className="bm-card-crop">{l.crop}</div>
+                  <div className="bm-card-farmer">
+                    <i className="fa-solid fa-user-circle" /> {l.farmer}
+                  </div>
+                  <div className="bm-card-price-row">
+                    <div className="bm-card-price">
+                      ৳{l.price}
+                      <span>/kg</span>
+                    </div>
+                    <div
+                      className={`bm-card-change ${l.up ? "bm-up" : "bm-down"}`}
+                    >
+                      <i
+                        className={`fa-solid fa-arrow-trend-${l.up ? "up" : "down"}`}
+                      />{" "}
+                      {l.change}
+                    </div>
+                  </div>
+                  <div className="bm-card-qty">
+                    <i className="fa-solid fa-scale-balanced" /> {l.qty}{" "}
+                    available
+                  </div>
+                  <button
+                    className="bm-card-btn"
+                    onClick={() => setSelectedListing(l)}
+                  >
+                    <i className="fa-solid fa-cart-shopping" /> Place Order
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
       {/* ORDER MODAL */}
@@ -533,6 +539,6 @@ export default function Marketplace() {
           onClose={() => setSelectedListing(null)}
         />
       )}
-    </>
+    </BuyerLayout>
   );
 }

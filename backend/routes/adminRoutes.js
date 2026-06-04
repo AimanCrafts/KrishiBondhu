@@ -4,7 +4,6 @@ const adminAuth = require("../middleware/adminAuth");
 const upload = require("../middleware/upload");
 const {
   adminLogin,
-  getPublicStats,
   getStats,
   getUsers,
   updateUserStatus,
@@ -30,50 +29,49 @@ const {
   getNotifications,
   markNotificationRead,
   markAllRead,
-  getMarketPrices,
-  createMarketPrice,
-  updateMarketPrice,
-  deleteMarketPrice,
 } = require("../controllers/adminController");
 
+// Public
 router.post("/login", adminLogin);
-router.get("/public-stats", getPublicStats);
 router.get("/crops", getCrops);
 router.get("/diseases", getDiseases);
-router.get("/experts", getExperts);
-router.get("/market-prices", getMarketPrices);
 
+// Protected
 router.use(adminAuth);
 
+// Stats & Users
 router.get("/stats", getStats);
 router.get("/users", getUsers);
 router.patch("/users/:id/status", updateUserStatus);
 
+// Crops
 router.post("/crops", upload.single("img"), createCrop);
 router.put("/crops/:id", upload.single("img"), updateCrop);
 router.delete("/crops/:id", deleteCrop);
 
+// Diseases
 router.post("/diseases", upload.single("img"), createDisease);
 router.put("/diseases/:id", upload.single("img"), updateDisease);
 router.delete("/diseases/:id", deleteDisease);
 
+// Marketplace
 router.get("/marketplace", getListings);
 router.post("/marketplace", createListing);
 router.put("/marketplace/:id", updateListing);
 router.patch("/marketplace/:id", patchListing);
 router.delete("/marketplace/:id", deleteListing);
 
+// Experts
+router.get("/experts", getExperts);
 router.post("/experts", createExpert);
 router.put("/experts/:id", updateExpert);
 router.delete("/experts/:id", deleteExpert);
 
+// Content
 router.get("/content", getContent);
 router.put("/content/:key", updateContent);
 
-router.post("/market-prices", createMarketPrice);
-router.put("/market-prices/:id", updateMarketPrice);
-router.delete("/market-prices/:id", deleteMarketPrice);
-
+// Notifications
 router.get("/notifications", getNotifications);
 router.patch("/notifications/:id/read", markNotificationRead);
 router.patch("/notifications/read-all", markAllRead);

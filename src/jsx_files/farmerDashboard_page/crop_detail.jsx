@@ -1,5 +1,3 @@
-// src/jsx_files/farmerDashboard_page/crop_detail.jsx
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../css_files/farmerDashboard_page/crop_detail.css";
@@ -35,7 +33,6 @@ export default function CropDetail() {
   useEffect(() => {
     const fetchCrop = async () => {
       try {
-        // সব crops fetch করে id দিয়ে match করো
         const res = await fetch(`${API}/admin/crops`);
         if (!res.ok) throw new Error("Server error");
         const data = await res.json();
@@ -51,7 +48,6 @@ export default function CropDetail() {
     fetchCrop();
   }, [id]);
 
-  /* ── Loading ── */
   if (loading) {
     return (
       <div className="crop-loading">
@@ -63,7 +59,6 @@ export default function CropDetail() {
     );
   }
 
-  /* ── Error ── */
   if (error) {
     return (
       <div className="crop-error">

@@ -1,5 +1,3 @@
-/* src/css_files/buyer_page/buyer_profile.css */
-
 :root {
   --bp-navy: #0f172a;
   --bp-indigo: #4f46e5;
@@ -501,7 +499,7 @@
   color: var(--bp-text);
 }
 
-/* ── TOGGLE (reuse fd-toggle styles if loaded, else fallback) ── */
+/* ── TOGGLE ── */
 .fd-toggle {
   width: 40px;
   height: 22px;
@@ -570,37 +568,4 @@
     flex-direction: column;
     align-items: flex-start;
   }
-}
-
-/* ── Minimal Topbar ── */
-.fd-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  padding: 0 40px;
-  background: #fff;
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
-}
-.fd-brand {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  text-decoration: none;
-  color: #111827;
-}
-.fd-brand .fa-leaf {
-  color: #4caf50;
-}
-.fd-brand:hover {
-  color: #111827;
-}
-.fd-brand-krishi {
-  color: #4caf50;
 }
