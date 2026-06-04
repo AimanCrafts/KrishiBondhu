@@ -20,143 +20,47 @@ By combining these features, KrishiBondhu provides a **seamless, data-driven, an
 
 ## Screenshots
 
-### Landing Page
-
 <div align="center">
-  <img src="screenshots/home1.png" width="800" alt="Landing Page Hero">
-  <p><em>"The Digital Farm Assistant Bangladesh Has Been Waiting For" — hero section with illustrated farmer and platform overview</em></p>
+  <img src="screenshots/home1.png" width="800" alt="Landing Page">
+  <p><em>Landing page — "The Digital Farm Assistant Bangladesh Has Been Waiting For"</em></p>
 </div>
 
-<div align="center">
-  <img src="screenshots/home2.png" width="800" alt="Bangladesh Division Map">
-  <p><em>Interactive Bangladesh division map showing farmer presence across all 8 divisions</em></p>
-</div>
+<table>
+  <tr>
+    <td align="center">
+      <img src="screenshots/fdashboard1.png" width="400" alt="Farmer Dashboard">
+      <p><em>Farmer dashboard — live season tracking, market price, and field alerts</em></p>
+    </td>
+    <td align="center">
+      <img src="screenshots/fdashboard4.png" width="400" alt="AI Crop Recommendations">
+      <p><em>AI crop recommendations with soil-based match percentages</em></p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="screenshots/bmarketplace2.png" width="400" alt="Buyer Marketplace">
+      <p><em>Buyer marketplace — verified farmer listings with live pricing</em></p>
+    </td>
+    <td align="center">
+      <img src="screenshots/bdashboard2.png" width="400" alt="Procurement Analytics">
+      <p><em>Buyer procurement analytics — monthly spend chart and order overview</em></p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="screenshots/disease1.png" width="400" alt="Disease Library">
+      <p><em>Disease library — high-severity alerts with symptom identification</em></p>
+    </td>
+    <td align="center">
+      <img src="screenshots/consultation2.png" width="400" alt="Expert Consultation">
+      <p><em>Expert directory — certified agronomists available for direct consultation</em></p>
+    </td>
+  </tr>
+</table>
 
 <div align="center">
-  <img src="screenshots/home6.png" width="800" alt="How KrishiBondhu Works">
-  <p><em>Platform workflow at a glance — Register, Monitor, Detect, and Connect in four steps</em></p>
-</div>
-
----
-
-### Authentication
-
-<div align="center">
-  <img src="screenshots/buyerlogin1.png" width="800" alt="Login Page">
-  <p><em>Unified login portal with role-based access — Farmer (mobile + password), Buyer (email), and OTP sign-in</em></p>
-</div>
-
----
-
-### Farmer Portal — Dashboard
-
-<div align="center">
-  <img src="screenshots/fdashboard1.png" width="800" alt="Farmer Dashboard Hero">
-  <p><em>Personalized farmer dashboard with active season tracking, days to harvest, market price, and live field alerts</em></p>
-</div>
-
-<div align="center">
-  <img src="screenshots/fdashboard2.png" width="800" alt="Weather Intelligence">
-  <p><em>Real-time weather intelligence — live conditions, 7-day forecast, and pest warning alerts from OpenWeatherMap</em></p>
-</div>
-
-<div align="center">
-  <img src="screenshots/fdashboard3.png" width="800" alt="Field and Crop Tracking">
-  <p><em>Active field tracker — current crop growth stage, soil type, irrigation method, and next crop planning</em></p>
-</div>
-
-<div align="center">
-  <img src="screenshots/fdashboard4.png" width="800" alt="AI Crop Recommendations">
-  <p><em>AI-powered crop recommendations with match percentages based on soil type, season, and regional suitability</em></p>
-</div>
-
----
-
-### Farmer Portal — Crop Library
-
-<div align="center">
-  <img src="screenshots/cropdetails1.png" width="800" alt="Crop Detail Hero">
-  <p><em>Immersive crop detail view with fullscreen photography, season tags, and yield potential scoring</em></p>
-</div>
-
-<div align="center">
-  <img src="screenshots/cropdetails2.png" width="800" alt="Growing Calendar">
-  <p><em>Crop stats and growing calendar — water requirements, ideal temperature, yield per hectare, and monthly sow/harvest timeline</em></p>
-</div>
-
-<div align="center">
-  <img src="screenshots/cropdetails5.png" width="800" alt="Price and Demand Overview">
-  <p><em>Market intelligence panel — average price per KG, best selling month, demand level, and monthly activity index chart</em></p>
-</div>
-
----
-
-### Farmer Portal — Disease Library
-
-<div align="center">
-  <img src="screenshots/disease1.png" width="800" alt="Disease Hero">
-  <p><em>High-severity disease alerts with dramatic full-bleed field imagery and instant severity scoring</em></p>
-</div>
-
-<div align="center">
-  <img src="screenshots/disease2.png" width="800" alt="Disease Symptom Stages">
-  <p><em>Disease progression timeline — yield loss data, peak risk season, and stage-by-stage symptom identification guide</em></p>
-</div>
-
-<div align="center">
-  <img src="screenshots/disease4.png" width="800" alt="Treatment Options">
-  <p><em>Treatment options panel — chemical and organic treatment protocols alongside an interactive prevention checklist</em></p>
-</div>
-
----
-
-### Buyer Portal — Dashboard
-
-<div align="center">
-  <img src="screenshots/bdashboard1.png" width="800" alt="Buyer Dashboard Hero">
-  <p><em>Personalized buyer dashboard with live order stats, active farmers count, and new listing alerts</em></p>
-</div>
-
-<div align="center">
-  <img src="screenshots/bdashboard2.png" width="800" alt="Procurement Analytics">
-  <p><em>Procurement analytics — monthly spend chart, total orders, active farmers, and live listings at a glance</em></p>
-</div>
-
----
-
-### Buyer Portal — Marketplace
-
-<div align="center">
-  <img src="screenshots/bmarketplace1.png" width="800" alt="Marketplace Hero">
-  <p><em>Live marketplace with division-wide coverage stats, real-time market notices, and advanced search filters</em></p>
-</div>
-
-<div align="center">
-  <img src="screenshots/bmarketplace2.png" width="800" alt="Marketplace Listings">
-  <p><em>Verified farmer listings with per-kg pricing, available quantity, and one-click order placement</em></p>
-</div>
-
----
-
-### Farmer Portal — Expert Consultation
-
-<div align="center">
-  <img src="screenshots/consultation1.png" width="800" alt="Expert Consultation Hero">
-  <p><em>Expert consultation portal — connect directly with certified agronomists and agricultural researchers</em></p>
-</div>
-
-<div align="center">
-  <img src="screenshots/consultation2.png" width="800" alt="Expert Directory">
-  <p><em>Expert directory with specializations, institution affiliation, years of experience, and direct call/message options</em></p>
-</div>
-
----
-
-### Admin Panel
-
-<div align="center">
-  <img src="screenshots/admindashboard.png" width="800" alt="Admin Dashboard">
-  <p><em>Admin control panel — live platform overview with user registrations, quick actions, and secure session management</em></p>
+  <img src="screenshots/admindashboard.png" width="800" alt="Admin Panel">
+  <p><em>Admin control panel — live platform overview with user management and quick actions</em></p>
 </div>
 
 ---
